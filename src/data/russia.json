@@ -1,0 +1,70 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Москва",
+        "population": 12506468,
+        "area": 2511,
+        "capital": "Москва"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[37.3, 55.5], [37.8, 55.5], [37.8, 55.9], [37.3, 55.9], [37.3, 55.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Московская область",
+        "population": 7708499,
+        "area": 44329,
+        "capital": "Москва"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[35.8, 54.8], [39.5, 54.8], [39.5, 56.8], [35.8, 56.8], [35.8, 54.8]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Санкт-Петербург",
+        "population": 5351935,
+        "area": 1439,
+        "capital": "Санкт-Петербург"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[29.8, 59.7], [30.8, 59.7], [30.8, 60.1], [29.8, 60.1], [29.8, 59.7]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Ленинградская область",
+        "population": 1875872,
+        "area": 83908,
+        "capital": "Санкт-Петербург"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[27.5, 58.5], [34.5, 58.5], [34.5, 61.5], [27.5, 61.5], [27.5, 58.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Калининградская область",
+        "population": 1002187,
+        "area": 15125,
+        "capital": "Калининград"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[19.6, 54.3], [22.8, 54.3], [22.8, 55.3], [19.6, 55.3], [19.6, 54.3]]]
+      }
+    }
+  ]
+} 
