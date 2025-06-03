@@ -189,6 +189,7 @@ const regionTranslations: { [key: string]: string } = {
   "Chechnya": "Чечня",
   "Chelyabinsk": "Челябинская область",
   "Chukot": "Чукотский АО",
+  "Chukchi Autonomous Okrug": "Чукотский АО",
   "Chuvash": "Чувашия",
   "City of St. Petersburg": "Санкт-Петербург",
   "Dagestan": "Дагестан",
@@ -217,7 +218,9 @@ const regionTranslations: { [key: string]: string } = {
   "Leningrad": "Ленинградская область",
   "Lipetsk": "Липецкая область",
   "Magadan": "Магаданская область",
+  "Maga Buryatdan": "Магаданская область",
   "Mariy-El": "Марий Эл",
+  "Mordovia": "Мордовия",
   "Moscow City": "Москва",
   "Moskva": "Московская область",
   "Murmansk": "Мурманская область",
@@ -236,6 +239,7 @@ const regionTranslations: { [key: string]: string } = {
   "Rostov": "Ростовская область",
   "Ryazan'": "Рязанская область",
   "Sakha": "Якутия",
+  "Sakha (Yakutia)": "Якутия",
   "Sakhalin": "Сахалинская область",
   "Samara": "Самарская область",
   "Saratov": "Саратовская область",
@@ -258,7 +262,8 @@ const regionTranslations: { [key: string]: string } = {
   "Yamal-Nenets": "Ямало-Ненецкий АО",
   "Yaroslavl'": "Ярославская область",
   "Yevrey": "Еврейская АО",
-  "Zabaykal'ye": "Забайкальский край"
+  "Zabaykal'ye": "Забайкальский край",
+  "Chita": "Забайкальский край"
 };
 
 const RegionListContainer = styled.div`

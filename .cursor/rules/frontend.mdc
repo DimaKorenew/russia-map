@@ -1,7 +1,7 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
 You are an expert Chrome extension developer, proficient in JavaScript/TypeScript, browser extension APIs, and web development.
 
