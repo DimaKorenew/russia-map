@@ -535,16 +535,34 @@ export const RussiaMap: React.FC = () => {
       
       // Создаем временный элемент для измерения ширины текста
       const tempText = svg.append("text")
-        .attr("font-size", "14px")
-        .attr("font-weight", "600")
+        .attr("font-size", "22px")
+        .attr("font-weight", "700")
         .text(name);
       const textWidth = tempText.node()?.getBBox().width || 0;
       tempText.remove();
 
       const padding = 24;
-      const popupWidth = Math.max(200, textWidth + (padding * 2));
-      const popupHeight = 120;
-      const verticalOffset = 10;
+      const maxWidth = 320;
+      const popupWidth = Math.max(280, Math.min(maxWidth, textWidth + (padding * 2)));
+      
+      // Рассчитываем высоту с учетом переносов строк для рецептов
+      let totalRecipeLines = 0;
+      const recipeLines: string[][] = [];
+      
+      recipes.slice(0, 3).forEach(recipe => {
+        const lines = wrapText(recipe.name, popupWidth - (padding * 2), 16);
+        recipeLines.push(lines);
+        totalRecipeLines += lines.length;
+      });
+      
+      const baseHeight = 80;
+      const recipeLineHeight = 20;
+      const recipeSpacing = 8;
+      const popupHeight = recipes.length > 0 
+        ? baseHeight + (totalRecipeLines * recipeLineHeight) + (recipes.slice(0, 3).length * recipeSpacing)
+        : baseHeight;
+      
+      const verticalOffset = 15;
       
       const centroid = path.centroid(d);
       
@@ -573,7 +591,7 @@ export const RussiaMap: React.FC = () => {
       }
       
       if (point.y - popupHeight < 0) {
-        adjustedY = centroid[1] + verticalOffset;
+        adjustedY = centroid[1] + verticalOffset + popupHeight + 20;
       }
       
       const popup = popupGroup.append("g")
@@ -586,68 +604,106 @@ export const RussiaMap: React.FC = () => {
         .attr("y", -popupHeight / 2)
         .attr("width", popupWidth)
         .attr("height", popupHeight)
-        .attr("rx", 8)
+        .attr("rx", 12)
         .attr("fill", "white")
-        .attr("opacity", 0.95)
+        .attr("opacity", 1)
         .attr("filter", "url(#drop-shadow)")
+        .attr("stroke", "#e2e8f0")
+        .attr("stroke-width", 1)
         .style("pointer-events", "none");
 
-      // Название региона
+      // Стрелка внизу окна
+      const arrowSize = 8;
+      popup.append("polygon")
+        .attr("points", `0,${popupHeight/2} ${-arrowSize},${popupHeight/2 - arrowSize} ${arrowSize},${popupHeight/2 - arrowSize}`)
+        .attr("fill", "white")
+        .attr("stroke", "#e2e8f0")
+        .attr("stroke-width", 1)
+        .style("pointer-events", "none");
+
+      // Название региона (крупный черный текст)
       popup.append("text")
         .attr("x", 0)
-        .attr("y", -popupHeight / 2 + padding + 4)
+        .attr("y", -popupHeight / 2 + 35)
         .attr("text-anchor", "middle")
-        .attr("fill", "#1e293b")
-        .attr("font-weight", "600")
-        .attr("font-size", "14px")
+        .attr("fill", "#1a1a1a")
+        .attr("font-weight", "700")
+        .attr("font-size", "22px")
+        .attr("font-family", "system-ui, -apple-system, sans-serif")
         .style("pointer-events", "none")
         .text(name);
 
-      // Рецепты с ссылками
-      recipes.slice(0, 3).forEach((recipe, i) => {
-        const recipeGroup = popup.append("g")
-          .attr("transform", `translate(0, ${-popupHeight / 2 + (padding * 2) + 12 + (i * 24)})`)
-          .style("pointer-events", "all")
-          .style("cursor", "pointer");
+      // Рецепты как синие ссылки с переносом текста
+      if (recipes.length > 0) {
+        let currentY = 65;
+        
+        recipes.slice(0, 3).forEach((recipe, i) => {
+          const lines = recipeLines[i];
+          
+          const recipeGroup = popup.append("g")
+            .style("pointer-events", "all")
+            .style("cursor", "pointer");
 
-        // Создаем ссылку
-        const link = recipeGroup.append("a")
-          .attr("xlink:href", recipe.url)
-          .attr("target", "_blank")
-          .attr("rel", "noopener noreferrer");
+          // Создаем ссылку
+          const link = recipeGroup.append("a")
+            .attr("xlink:href", recipe.url)
+            .attr("target", "_blank")
+            .attr("rel", "noopener noreferrer");
 
-        // Добавляем текст рецепта в ссылку
-        const textElement = link.append("text")
-          .attr("x", 0)
-          .attr("text-anchor", "middle")
-          .attr("fill", "#475569")
-          .attr("font-size", "12px")
-          .style("transition", "fill 0.2s ease")
-          .text(recipe.name);
+          // Добавляем невидимую область для клика (размер по всем строкам)
+          const clickAreaHeight = lines.length * recipeLineHeight;
+          link.append("rect")
+            .attr("x", -popupWidth / 2 + 12)
+            .attr("y", -popupHeight / 2 + currentY - 10)
+            .attr("width", popupWidth - 24)
+            .attr("height", clickAreaHeight)
+            .attr("fill", "transparent");
 
-        // Добавляем невидимую область для клика
-        link.append("rect")
-          .attr("x", -popupWidth / 2)
-          .attr("y", -10)
-          .attr("width", popupWidth)
-          .attr("height", 20)
-          .attr("fill", "transparent");
-
-        // Добавляем hover эффект
-        link
-          .on("mouseover", function() {
-            d3.select(this).select("text")
-              .transition()
-              .duration(150)
-              .attr("fill", "#2563eb");
-          })
-          .on("mouseout", function() {
-            d3.select(this).select("text")
-              .transition()
-              .duration(150)
-              .attr("fill", "#475569");
+          // Добавляем текст рецепта построчно
+          lines.forEach((line, lineIndex) => {
+            const textElement = link.append("text")
+              .attr("x", 0)
+              .attr("y", -popupHeight / 2 + currentY + (lineIndex * recipeLineHeight))
+              .attr("text-anchor", "middle")
+              .attr("fill", "#2563eb")
+              .attr("font-size", "16px")
+              .attr("font-weight", "400")
+              .attr("font-family", "system-ui, -apple-system, sans-serif")
+              .style("text-decoration", "underline")
+              .style("transition", "fill 0.2s ease")
+              .text(line);
           });
-      });
+
+          // Добавляем hover эффект для всей ссылки
+          link
+            .on("mouseover", function() {
+              d3.select(this).selectAll("text")
+                .transition()
+                .duration(150)
+                .attr("fill", "#1d4ed8");
+            })
+            .on("mouseout", function() {
+              d3.select(this).selectAll("text")
+                .transition()
+                .duration(150)
+                .attr("fill", "#2563eb");
+            });
+
+          // Обновляем позицию для следующего рецепта
+          currentY += (lines.length * recipeLineHeight) + recipeSpacing;
+        });
+      } else {
+        // Показываем сообщение если нет рецептов
+        popup.append("text")
+          .attr("x", 0)
+          .attr("y", -popupHeight / 2 + 65)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#64748b")
+          .attr("font-size", "14px")
+          .attr("font-style", "italic")
+          .style("pointer-events", "none")
+          .text("Рецепты скоро появятся");
+      }
     };
 
     regions
