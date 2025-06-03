@@ -392,6 +392,106 @@ const ChevronIcon = styled.span<{ isOpen: boolean }>`
   }
 `;
 
+const TopRecipesContainer = styled.div`
+  background: white;
+  padding: 40px 20px;
+  width: 100%;
+  box-sizing: border-box;
+  border-bottom: 1px solid #e2e8f0;
+
+  @media (min-width: 768px) {
+    padding: 60px 20px;
+  }
+`;
+
+const TopRecipesContent = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+const TopRecipesTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 30px 0;
+  text-align: center;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  @media (min-width: 768px) {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+`;
+
+const TopRecipesList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+`;
+
+const TopRecipeItem = styled.div`
+  background: #f8fafc;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transform: translateX(4px);
+  }
+`;
+
+const TopRecipeHeader = styled.div`
+  padding: 20px 24px;
+  background: #f8fafc;
+  color: #1e293b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+
+  @media (min-width: 768px) {
+    padding: 24px 32px;
+    font-size: 18px;
+  }
+`;
+
+const RecipeNumber = styled.span`
+  background: #1e293b;
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 16px;
+  flex-shrink: 0;
+
+  @media (min-width: 768px) {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+`;
+
+// Временные данные - будут заменены на реальные
+const topRecipes = [
+  { id: 1, name: "Рецепт 1", url: "#" },
+  { id: 2, name: "Рецепт 2", url: "#" },
+  { id: 3, name: "Рецепт 3", url: "#" },
+  { id: 4, name: "Рецепт 4", url: "#" },
+  { id: 5, name: "Рецепт 5", url: "#" },
+  { id: 6, name: "Рецепт 6", url: "#" },
+  { id: 7, name: "Рецепт 7", url: "#" },
+  { id: 8, name: "Рецепт 8", url: "#" },
+  { id: 9, name: "Рецепт 9", url: "#" },
+  { id: 10, name: "Рецепт 10", url: "#" }
+];
+
 export const RussiaMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [activeRegion, setActiveRegion] = useState<string | null>(null);
@@ -768,6 +868,27 @@ export const RussiaMap: React.FC = () => {
 
   return (
     <MapContainer>
+      <TopRecipesContainer>
+        <TopRecipesContent>
+          <TopRecipesTitle>Топ 10 рецептов в мае</TopRecipesTitle>
+          <TopRecipesList>
+            {topRecipes.map((recipe) => (
+              <TopRecipeItem key={recipe.id}>
+                <TopRecipeHeader>
+                  <RecipeNumber>{recipe.id}</RecipeNumber>
+                  <RecipeLink 
+                    href={recipe.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {recipe.name}
+                  </RecipeLink>
+                </TopRecipeHeader>
+              </TopRecipeItem>
+            ))}
+          </TopRecipesList>
+        </TopRecipesContent>
+      </TopRecipesContainer>
       <MapWrapper ref={mapRef} />
       <RegionListContainer>
         <SearchContainer>
