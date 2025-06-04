@@ -238,6 +238,18 @@ const RegionRecipeItem = styled.div`
     background: #f1f5f9;
     transform: translateX(4px);
   }
+
+  @media (max-width: 768px) {
+    padding: 10px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px;
+    margin-bottom: 4px;
+    border-radius: 4px;
+  }
 `;
 
 interface RegionInfo {
@@ -245,6 +257,19 @@ interface RegionInfo {
   position: [number, number];
   recipes: Recipe[];
 }
+
+const FullWidthContainer = styled.div`
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  background: white;
+  
+  @media (max-width: 768px) {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+`;
 
 const regionTranslations: { [key: string]: string } = {
   "Adygey": "Адыгея",
@@ -349,6 +374,15 @@ const RegionListContainer = styled.div`
   @media (min-width: 768px) {
     padding: 60px 20px;
   }
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 12px;
+  }
 `;
 
 const RegionList = styled.div`
@@ -357,6 +391,16 @@ const RegionList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin: 0;
+    gap: 8px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 6px;
+  }
 `;
 
 const SearchContainer = styled.div`
@@ -366,6 +410,15 @@ const SearchContainer = styled.div`
 
   @media (min-width: 768px) {
     margin-bottom: 40px;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin: 0 0 20px 0;
+  }
+
+  @media (max-width: 480px) {
+    margin-bottom: 16px;
   }
 `;
 
@@ -382,6 +435,18 @@ const SearchInput = styled.input`
   @media (min-width: 768px) {
     font-size: 18px;
     padding: 20px 28px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 14px 20px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 18px;
+    font-size: 14px;
+    border-radius: 8px;
   }
 
   &:focus {
@@ -438,6 +503,16 @@ const RegionHeader = styled.div<{ isActive: boolean }>`
     font-size: 20px;
   }
 
+  @media (max-width: 768px) {
+    padding: 16px 20px;
+    font-size: 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+
   &:hover {
     background: ${props => props.isActive ? '#1e293b' : '#f1f5f9'};
   }
@@ -452,6 +527,14 @@ const RecipeContainer = styled.div<{ isOpen: boolean }>`
 const RegionRecipeList = styled.div`
   padding: 16px;
   background: white;
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px 12px;
+  }
 `;
 
 const ChevronIcon = styled.span<{ isOpen: boolean }>`
@@ -475,11 +558,29 @@ const TopRecipesContainer = styled.div`
   @media (min-width: 768px) {
     padding: 60px 20px;
   }
+
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 0;
+  }
 `;
 
 const TopRecipesContent = styled.div`
   max-width: 800px;
   margin: 0 auto;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    margin: 0;
+    padding: 0 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 12px;
+  }
 `;
 
 const TopRecipesTitle = styled.h2`
@@ -494,12 +595,110 @@ const TopRecipesTitle = styled.h2`
     font-size: 28px;
     margin-bottom: 40px;
   }
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+`;
+
+const DescriptionText = styled.p`
+  font-size: 16px;
+  color: #475569;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+`;
+
+const MapTitle = styled.h2`
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+  text-align: center;
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 40px 20px 0;
+
+  @media (min-width: 768px) {
+    font-size: 28px;
+    margin-bottom: 24px;
+    padding: 60px 20px 0;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 22px;
+    margin-bottom: 16px;
+    padding: 30px 16px 0;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 12px;
+    padding: 20px 12px 0;
+  }
+`;
+
+const MapDescription = styled.div`
+  font-size: 16px;
+  color: #475569;
+  text-align: center;
+  line-height: 1.6;
+  margin: 0 auto 30px;
+  font-family: system-ui, -apple-system, sans-serif;
+  max-width: 800px;
+  padding: 0 20px;
+
+  @media (min-width: 768px) {
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 15px;
+    margin-bottom: 20px;
+    padding: 0 16px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 16px;
+    padding: 0 12px;
+  }
 `;
 
 const TopRecipesList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 6px;
+  }
 `;
 
 const TopRecipeItem = styled.div`
@@ -512,6 +711,12 @@ const TopRecipeItem = styled.div`
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     transform: translateX(4px);
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
   }
 `;
 
@@ -527,6 +732,16 @@ const TopRecipeHeader = styled.div`
   @media (min-width: 768px) {
     padding: 24px 32px;
     font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px 24px;
+    font-size: 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 14px 20px;
+    font-size: 14px;
   }
 `;
 
@@ -548,6 +763,20 @@ const RecipeNumber = styled.span`
     width: 32px;
     height: 32px;
     font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    width: 26px;
+    height: 26px;
+    font-size: 13px;
+    margin-right: 12px;
+  }
+
+  @media (max-width: 480px) {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    margin-right: 10px;
   }
 `;
 
@@ -571,34 +800,8 @@ export const RussiaMap: React.FC = () => {
   const [expandedRegion, setExpandedRegion] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [zoomLevel, setZoomLevel] = useState(1);
-  const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
   const svgRef = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
-
-  // Функции управления зумом
-  const handleZoomIn = () => {
-    if (zoomBehaviorRef.current && svgRef.current) {
-      svgRef.current.transition().duration(300).call(
-        zoomBehaviorRef.current.scaleBy, 1.5
-      );
-    }
-  };
-
-  const handleZoomOut = () => {
-    if (zoomBehaviorRef.current && svgRef.current) {
-      svgRef.current.transition().duration(300).call(
-        zoomBehaviorRef.current.scaleBy, 1 / 1.5
-      );
-    }
-  };
-
-  const handleResetZoom = () => {
-    if (zoomBehaviorRef.current && svgRef.current) {
-      svgRef.current.transition().duration(500).call(
-        zoomBehaviorRef.current.transform, 
-        d3.zoomIdentity
-      );
-    }
-  };
+  const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
 
   // Функция для разбивки текста на строки
   const wrapText = (text: string, maxWidth: number, fontSize: number = 12): string[] => {
@@ -696,7 +899,6 @@ export const RussiaMap: React.FC = () => {
         });
 
       svg.call(zoom);
-      zoomBehaviorRef.current = zoom;
     }
 
     // Добавляем определение для фильтра тени
@@ -1034,9 +1236,11 @@ export const RussiaMap: React.FC = () => {
       regions.attr("d", path as any);
       
       // Переинициализация зума при изменении размера экрана
-      if (isMobile && zoomBehaviorRef.current) {
+      if (isMobile) {
         // Сбрасываем зум при resize
-        svg.call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
+        if (zoomBehaviorRef.current) {
+          svg.call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
+        }
         setZoomLevel(1);
       } else if (!isMobile && zoomBehaviorRef.current) {
         // Отключаем зум на десктопе
@@ -1059,91 +1263,88 @@ export const RussiaMap: React.FC = () => {
 
   return (
     <MapContainer>
-      <TopRecipesContainer>
-        <TopRecipesContent>
-          <TopRecipesTitle>Топ 10 рецептов в мае</TopRecipesTitle>
-          <TopRecipesList>
-            {topRecipes.map((recipe) => (
-              <TopRecipeItem key={recipe.id}>
-                <TopRecipeHeader>
-                  <RecipeNumber>{recipe.id}</RecipeNumber>
-                  <RecipeLink 
-                    href={recipe.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {recipe.name}
-                  </RecipeLink>
-                </TopRecipeHeader>
-              </TopRecipeItem>
-            ))}
-          </TopRecipesList>
-        </TopRecipesContent>
-      </TopRecipesContainer>
+      <FullWidthContainer className="sc-hawdNJ fZSglL">
+        <TopRecipesContainer>
+          <TopRecipesContent>
+            <TopRecipesTitle>Популярные рецепты в мае</TopRecipesTitle>
+            <DescriptionText>
+              Мы проанализировали данные за май<br />
+              И выделили 10 самых популярных рецептов на сайте edimdoma.ru
+            </DescriptionText>
+            <TopRecipesList>
+              {topRecipes.map((recipe) => (
+                <TopRecipeItem key={recipe.id}>
+                  <TopRecipeHeader>
+                    <RecipeNumber>{recipe.id}</RecipeNumber>
+                    <RecipeLink 
+                      href={recipe.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {recipe.name}
+                    </RecipeLink>
+                  </TopRecipeHeader>
+                </TopRecipeItem>
+              ))}
+            </TopRecipesList>
+          </TopRecipesContent>
+        </TopRecipesContainer>
+      </FullWidthContainer>
+      <MapTitle>Интерактивная карта рецептов России</MapTitle>
+      <MapDescription>
+        Мы собрали интерактивную карту самых популярных рецептов в регионах России.<br /><br />
+        
+        Теперь, кликая на любой из них, вы можете узнать, какое блюдо стало фаворитом у местных жителей этой весной. 
+        К сожалению, по некоторым регионам информации нет.<br /><br />
+        
+        Предпочтения в разных уголках страны заметно различаются: в Калининграде лидирует литовский борщ, в Татарстане и Башкортостане — кыстыбый с картофелем, а в Хабаровском крае — папоротник по-корейски.<br /><br />
+        
+        Исследуйте и вдохновляйтесь кулинарными предпочтениями со всей страны!
+      </MapDescription>
       <MapWrapper ref={mapRef} />
-      <ZoomControls>
-        <ZoomButton 
-          onClick={handleZoomIn}
-          disabled={zoomLevel >= 3}
-          aria-label="Увеличить карту"
-        >
-          +
-        </ZoomButton>
-        <ZoomButton 
-          onClick={handleZoomOut}
-          disabled={zoomLevel <= 0.5}
-          aria-label="Уменьшить карту"
-        >
-          −
-        </ZoomButton>
-        <ResetZoomButton 
-          onClick={handleResetZoom}
-          aria-label="Сбросить масштаб"
-        >
-          Сброс
-        </ResetZoomButton>
-      </ZoomControls>
-      <RegionListContainer>
-        <SearchContainer>
-          <SearchInput
-            type="text"
-            placeholder="Поиск региона..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <SearchIcon>🔍</SearchIcon>
-        </SearchContainer>
-        <RegionList>
-          {filteredRegions.map((region) => (
-            <RegionItem key={region.englishName}>
-              <RegionHeader 
-                isActive={expandedRegion === region.russianName}
-                onClick={() => setExpandedRegion(
-                  expandedRegion === region.russianName ? null : region.russianName
-                )}
-              >
-                {region.russianName}
-                <ChevronIcon isOpen={expandedRegion === region.russianName} />
-              </RegionHeader>
-              <RecipeContainer isOpen={expandedRegion === region.russianName}>
-                <RegionRecipeList>
-                  {region.recipes.map((recipe) => (
-                    <RegionRecipeItem key={recipe.id}>
-                      <RecipeLink 
-                        href={recipe.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {recipe.name}
-                      </RecipeLink>
-                    </RegionRecipeItem>
-                  ))}
-                </RegionRecipeList>
-              </RecipeContainer>
-            </RegionItem>
-          ))}
-        </RegionList>
-      </RegionListContainer>
+      <FullWidthContainer className="sc-hawdNJ fZSglL">
+        <RegionListContainer>
+          <SearchContainer>
+            <SearchInput
+              type="text"
+              placeholder="Поиск региона..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <SearchIcon>🔍</SearchIcon>
+          </SearchContainer>
+          <RegionList>
+            {filteredRegions.map((region) => (
+              <RegionItem key={region.englishName}>
+                <RegionHeader 
+                  isActive={expandedRegion === region.russianName}
+                  onClick={() => setExpandedRegion(
+                    expandedRegion === region.russianName ? null : region.russianName
+                  )}
+                >
+                  {region.russianName}
+                  <ChevronIcon isOpen={expandedRegion === region.russianName} />
+                </RegionHeader>
+                <RecipeContainer isOpen={expandedRegion === region.russianName}>
+                  <RegionRecipeList>
+                    {region.recipes.map((recipe) => (
+                      <RegionRecipeItem key={recipe.id}>
+                        <RecipeLink 
+                          href={recipe.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {recipe.name}
+                        </RecipeLink>
+                      </RegionRecipeItem>
+                    ))}
+                  </RegionRecipeList>
+                </RecipeContainer>
+              </RegionItem>
+            ))}
+          </RegionList>
+        </RegionListContainer>
+      </FullWidthContainer>
     </MapContainer>
   );
 }; 
