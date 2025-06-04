@@ -192,6 +192,7 @@ const regionTranslations: { [key: string]: string } = {
   "Chukchi Autonomous Okrug": "Чукотский АО",
   "Chuvash": "Чувашия",
   "City of St. Petersburg": "Санкт-Петербург",
+  "Crimea": "Крым",
   "Dagestan": "Дагестан",
   "Gorno-Altay": "Республика Алтай",
   "Ingush": "Ингушетия",
@@ -243,6 +244,7 @@ const regionTranslations: { [key: string]: string } = {
   "Sakhalin": "Сахалинская область",
   "Samara": "Самарская область",
   "Saratov": "Саратовская область",
+  "Sevastopol'": "Севастополь",
   "Smolensk": "Смоленская область",
   "Stavropol'": "Ставропольский край",
   "Sverdlovsk": "Свердловская область",
@@ -263,6 +265,7 @@ const regionTranslations: { [key: string]: string } = {
   "Yaroslavl'": "Ярославская область",
   "Yevrey": "Еврейская АО",
   "Zabaykal'ye": "Забайкальский край",
+  "Zabaikalskiy Krai": "Забайкальский край",
   "Chita": "Забайкальский край"
 };
 

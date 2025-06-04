@@ -629,6 +629,33 @@
           "url": "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami"
         }
       ]
+    },
+    "Крым": {
+      "recipes": [
+        {
+          "id": "салат-лаззат-с-хрустящими-баклажанами",
+          "name": "Салат Лаззат с хрустящими баклажанами",
+          "url": "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami"
+        }
+      ]
+    },
+    "Севастополь": {
+      "recipes": [
+        {
+          "id": "кекс-с-изюмом",
+          "name": "Кекс с изюмом",
+          "url": "https://www.edimdoma.ru/retsepty/147218-keks-s-izyumom"
+        }
+      ]
+    },
+    "Забайкальский край": {
+      "recipes": [
+        {
+          "id": "булочки-синнабон-с-корицей",
+          "name": "Булочки синнабон с корицей",
+          "url": "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey"
+        }
+      ]
     }
   }
 }
