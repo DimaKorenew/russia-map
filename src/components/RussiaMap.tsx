@@ -478,18 +478,18 @@ const RecipeNumber = styled.span`
   }
 `;
 
-// Временные данные - будут заменены на реальные
+// Топ 10 рецептов в мае
 const topRecipes = [
-  { id: 1, name: "Рецепт 1", url: "#" },
-  { id: 2, name: "Рецепт 2", url: "#" },
-  { id: 3, name: "Рецепт 3", url: "#" },
-  { id: 4, name: "Рецепт 4", url: "#" },
-  { id: 5, name: "Рецепт 5", url: "#" },
-  { id: 6, name: "Рецепт 6", url: "#" },
-  { id: 7, name: "Рецепт 7", url: "#" },
-  { id: 8, name: "Рецепт 8", url: "#" },
-  { id: 9, name: "Рецепт 9", url: "#" },
-  { id: 10, name: "Рецепт 10", url: "#" }
+  { id: 1, name: "Салат «Лаззат» с хрустящими баклажанами", url: "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami" },
+  { id: 2, name: "Булочки синнабон с корицей", url: "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey" },
+  { id: 3, name: "Меренговый рулет", url: "https://www.edimdoma.ru/retsepty/124814-merengovyy-rulet" },
+  { id: 4, name: "Тирамису классический", url: "https://www.edimdoma.ru/retsepty/45966-tiramisu-klassicheskiy" },
+  { id: 5, name: "Королевская ватрушка", url: "https://www.edimdoma.ru/retsepty/76677-korolevskaya-vatrushka" },
+  { id: 6, name: "Творожное печенье «Гусиные лапки»", url: "https://edimdoma.ru/retsepty/76387-tvorozhnoe-pechenie-gusinye-lapki" },
+  { id: 7, name: "Творожная запеканка (как в детском саду)", url: "https://www.edimdoma.ru/retsepty/44250-tvorozhnaya-zapekanka-kak-v-detskom-sadu" },
+  { id: 8, name: "Кекс в кружке", url: "https://www.edimdoma.ru/retsepty/48979-keks-v-kruzhke" },
+  { id: 9, name: "Классический сметанник из песочного теста", url: "https://www.edimdoma.ru/retsepty/72674-bliny-na-kipyatke" },
+  { id: 10, name: "Блины на кипятке", url: "https://www.edimdoma.ru/retsepty/46203-vanilnyy-smetannik-iz-pesochnogo-testa" }
 ];
 
 export const RussiaMap: React.FC = () => {
