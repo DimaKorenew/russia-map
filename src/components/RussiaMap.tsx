@@ -29,6 +29,76 @@ const MapWrapper = styled.div`
   padding: 0;
   overflow: visible;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    height: 60vh;
+    min-height: 400px;
+    max-height: 500px;
+    overflow: hidden;
+  }
+
+  @media (max-width: 480px) {
+    height: 50vh;
+    min-height: 350px;
+    max-height: 400px;
+  }
+`;
+
+const ZoomControls = styled.div`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 1000;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+const ZoomButton = styled.button`
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  color: #1e293b;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  user-select: none;
+
+  &:hover {
+    background: #f8fafc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    transform: scale(0.95);
+    background: #e2e8f0;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+const ResetZoomButton = styled(ZoomButton)`
+  width: auto;
+  height: 36px;
+  border-radius: 18px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -500,6 +570,35 @@ export const RussiaMap: React.FC = () => {
   const [activeRegion, setActiveRegion] = useState<string | null>(null);
   const [expandedRegion, setExpandedRegion] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [zoomLevel, setZoomLevel] = useState(1);
+  const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const svgRef = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
+
+  // Функции управления зумом
+  const handleZoomIn = () => {
+    if (zoomBehaviorRef.current && svgRef.current) {
+      svgRef.current.transition().duration(300).call(
+        zoomBehaviorRef.current.scaleBy, 1.5
+      );
+    }
+  };
+
+  const handleZoomOut = () => {
+    if (zoomBehaviorRef.current && svgRef.current) {
+      svgRef.current.transition().duration(300).call(
+        zoomBehaviorRef.current.scaleBy, 1 / 1.5
+      );
+    }
+  };
+
+  const handleResetZoom = () => {
+    if (zoomBehaviorRef.current && svgRef.current) {
+      svgRef.current.transition().duration(500).call(
+        zoomBehaviorRef.current.transform, 
+        d3.zoomIdentity
+      );
+    }
+  };
 
   // Функция для разбивки текста на строки
   const wrapText = (text: string, maxWidth: number, fontSize: number = 12): string[] => {
@@ -553,8 +652,20 @@ export const RussiaMap: React.FC = () => {
 
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const padding = 80;
-    const verticalPadding = height * 0.15;
+    
+    // Адаптивные настройки для разных устройств
+    const isMobile = width <= 768;
+    const isSmallMobile = width <= 480;
+    
+    const padding = isMobile ? (isSmallMobile ? 20 : 40) : 80;
+    const verticalPadding = isMobile ? 
+      (isSmallMobile ? height * 0.05 : height * 0.08) : 
+      height * 0.15;
+    
+    // Высота карты для мобильных устройств
+    const mapHeight = isMobile ? 
+      (isSmallMobile ? Math.min(400, height * 0.5) : Math.min(500, height * 0.6)) : 
+      height;
 
     const svg = d3.select(mapRef.current)
       .append("svg")
@@ -564,12 +675,29 @@ export const RussiaMap: React.FC = () => {
         -padding, 
         -verticalPadding,
         width + padding * 2,
-        height + verticalPadding * 2
+        mapHeight + verticalPadding * 2
       ].join(" "))
       .style("max-width", "100%")
       .style("height", "auto")
-      .style("overflow", "visible")
+      .style("overflow", isMobile ? "hidden" : "visible")
       .style("z-index", "1");
+
+    // Сохраняем ссылку на SVG для управления зумом
+    svgRef.current = svg;
+
+    // Настройка зума только для мобильных устройств
+    if (isMobile) {
+      const zoom = d3.zoom<SVGSVGElement, unknown>()
+        .scaleExtent([0.5, 3])
+        .on("zoom", (event) => {
+          const { transform } = event;
+          setZoomLevel(transform.k);
+          g.attr("transform", `translate(${transform.x}, ${transform.y + verticalPadding/2}) scale(${transform.k})`);
+        });
+
+      svg.call(zoom);
+      zoomBehaviorRef.current = zoom;
+    }
 
     // Добавляем определение для фильтра тени
     const defs = svg.append("defs");
@@ -596,7 +724,7 @@ export const RussiaMap: React.FC = () => {
 
     // Группа для карты
     const g = svg.append("g")
-      .attr("transform", `translate(0, ${verticalPadding/2})`);
+      .attr("transform", isMobile ? `translate(0, ${verticalPadding/2})` : `translate(0, ${verticalPadding/2})`);
 
     // Группа для всплывающих окон с повышенным z-index
     const popupGroup = svg.append("g")
@@ -607,10 +735,12 @@ export const RussiaMap: React.FC = () => {
       .rotate([-105, 0])
       .center([2, 56])
       .parallels([50, 70])
-      .scale(Math.min(width, height) * 1.45)
+      .scale(isMobile ? 
+        (isSmallMobile ? Math.min(width, mapHeight) * 0.8 : Math.min(width, mapHeight) * 1.0) : 
+        Math.min(width, height) * 1.45)
       .translate([
         (width + padding * 2) / 2,
-        height / 2 + verticalPadding/2
+        (isMobile ? mapHeight : height) / 2 + verticalPadding/2
       ]);
 
     const path = d3.geoPath().projection(projection);
@@ -636,31 +766,40 @@ export const RussiaMap: React.FC = () => {
       const name = regionTranslations[englishName] || 'Неизвестный регион';
       const recipes = (recipesData as RecipesData).regions[name]?.recipes || [];
       
+      // Адаптивные настройки для всплывающих окон
+      const isMobile = window.innerWidth <= 768;
+      const isSmallMobile = window.innerWidth <= 480;
+      
       // Создаем временный элемент для измерения ширины текста
       const tempText = svg.append("text")
-        .attr("font-size", "22px")
+        .attr("font-size", isMobile ? (isSmallMobile ? "18px" : "20px") : "22px")
         .attr("font-weight", "700")
         .text(name);
       const textWidth = tempText.node()?.getBBox().width || 0;
       tempText.remove();
 
-      const padding = 24;
-      const maxWidth = 320;
-      const popupWidth = Math.max(280, Math.min(maxWidth, textWidth + (padding * 2)));
+      const padding = isMobile ? (isSmallMobile ? 16 : 20) : 24;
+      const maxWidth = isMobile ? (isSmallMobile ? 250 : 300) : 320;
+      const popupWidth = Math.max(
+        isMobile ? (isSmallMobile ? 200 : 240) : 280, 
+        Math.min(maxWidth, textWidth + (padding * 2))
+      );
       
       // Рассчитываем высоту с учетом переносов строк для рецептов
       let totalRecipeLines = 0;
       const recipeLines: string[][] = [];
       
+      const recipeFontSize = isMobile ? (isSmallMobile ? 14 : 15) : 16;
+      
       recipes.slice(0, 3).forEach(recipe => {
-        const lines = wrapText(recipe.name, popupWidth - (padding * 2), 16);
+        const lines = wrapText(recipe.name, popupWidth - (padding * 2), recipeFontSize);
         recipeLines.push(lines);
         totalRecipeLines += lines.length;
       });
       
-      const baseHeight = 80;
-      const recipeLineHeight = 20;
-      const recipeSpacing = 8;
+      const baseHeight = isMobile ? (isSmallMobile ? 60 : 70) : 80;
+      const recipeLineHeight = isMobile ? (isSmallMobile ? 16 : 18) : 20;
+      const recipeSpacing = isMobile ? 6 : 8;
       const popupHeight = recipes.length > 0 
         ? baseHeight + (totalRecipeLines * recipeLineHeight) + (recipes.slice(0, 3).length * recipeSpacing)
         : baseHeight;
@@ -727,18 +866,18 @@ export const RussiaMap: React.FC = () => {
       // Название региона (крупный черный текст)
       popup.append("text")
         .attr("x", 0)
-        .attr("y", -popupHeight / 2 + 35)
+        .attr("y", -popupHeight / 2 + (isMobile ? (isSmallMobile ? 28 : 32) : 35))
         .attr("text-anchor", "middle")
         .attr("fill", "#1a1a1a")
         .attr("font-weight", "700")
-        .attr("font-size", "22px")
+        .attr("font-size", isMobile ? (isSmallMobile ? "18px" : "20px") : "22px")
         .attr("font-family", "system-ui, -apple-system, sans-serif")
         .style("pointer-events", "none")
         .text(name);
 
       // Рецепты как синие ссылки с переносом текста
       if (recipes.length > 0) {
-        let currentY = 65;
+        let currentY = isMobile ? (isSmallMobile ? 50 : 58) : 65;
         
         recipes.slice(0, 3).forEach((recipe, i) => {
           const lines = recipeLines[i];
@@ -769,7 +908,7 @@ export const RussiaMap: React.FC = () => {
               .attr("y", -popupHeight / 2 + currentY + (lineIndex * recipeLineHeight))
               .attr("text-anchor", "middle")
               .attr("fill", "#2563eb")
-              .attr("font-size", "16px")
+              .attr("font-size", `${recipeFontSize}px`)
               .attr("font-weight", "400")
               .attr("font-family", "system-ui, -apple-system, sans-serif")
               .style("text-decoration", "underline")
@@ -799,10 +938,10 @@ export const RussiaMap: React.FC = () => {
         // Показываем сообщение если нет рецептов
         popup.append("text")
           .attr("x", 0)
-          .attr("y", -popupHeight / 2 + 65)
+          .attr("y", -popupHeight / 2 + (isMobile ? (isSmallMobile ? 50 : 58) : 65))
           .attr("text-anchor", "middle")
           .attr("fill", "#64748b")
-          .attr("font-size", "14px")
+          .attr("font-size", isMobile ? (isSmallMobile ? "12px" : "13px") : "14px")
           .attr("font-style", "italic")
           .style("pointer-events", "none")
           .text("Рецепты скоро появятся");
@@ -812,18 +951,22 @@ export const RussiaMap: React.FC = () => {
     regions
       .style("cursor", "pointer")
       .on("mouseover", function() {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr("fill", "#cbd5e1")
-          .attr("opacity", 0.7);
+        if (!isMobile) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("fill", "#cbd5e1")
+            .attr("opacity", 0.7);
+        }
       })
       .on("mouseout", function() {
-        d3.select(this)
-          .transition()
-          .duration(200)
-          .attr("fill", "#e2e8f0")
-          .attr("opacity", 1);
+        if (!isMobile) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("fill", "#e2e8f0")
+            .attr("opacity", 1);
+        }
       })
       .on("mousedown", function(event) {
         event.preventDefault();
@@ -831,41 +974,86 @@ export const RussiaMap: React.FC = () => {
       .on("click", function(event, d) {
         event.preventDefault();
         event.stopPropagation();
+        
+        // На мобильных устройствах добавляем visual feedback
+        if (isMobile) {
+          d3.select(this)
+            .transition()
+            .duration(100)
+            .attr("fill", "#cbd5e1")
+            .transition()
+            .duration(100)
+            .attr("fill", "#e2e8f0");
+        }
+        
         updatePopup(d);
       });
 
-    svg.on("click", function(event) {
-      if (event.target.tagName === 'svg') {
-        updatePopup(null);
-      }
-    });
+    // Отключаем клик по SVG на мобильных устройствах для корректной работы зума
+    if (!isMobile) {
+      svg.on("click", function(event) {
+        if (event.target.tagName === 'svg') {
+          updatePopup(null);
+        }
+      });
+    }
 
     const handleResize = () => {
       const newWidth = window.innerWidth;
       const newHeight = window.innerHeight;
-      const newVerticalPadding = newHeight * 0.15;
+      
+      // Адаптивные настройки для разных устройств (такие же как при инициализации)
+      const isMobile = newWidth <= 768;
+      const isSmallMobile = newWidth <= 480;
+      
+      const newPadding = isMobile ? (isSmallMobile ? 20 : 40) : 80;
+      const newVerticalPadding = isMobile ? 
+        (isSmallMobile ? newHeight * 0.05 : newHeight * 0.08) : 
+        newHeight * 0.15;
+      
+      const newMapHeight = isMobile ? 
+        (isSmallMobile ? Math.min(400, newHeight * 0.5) : Math.min(500, newHeight * 0.6)) : 
+        newHeight;
       
       svg.attr("viewBox", [
-        -padding,
+        -newPadding,
         -newVerticalPadding,
-        newWidth + padding * 2,
-        newHeight + newVerticalPadding * 2
+        newWidth + newPadding * 2,
+        newMapHeight + newVerticalPadding * 2
       ].join(" "));
       
       projection
-        .scale(Math.min(newWidth, newHeight) * 1.45)
+        .scale(isMobile ? 
+          (isSmallMobile ? Math.min(newWidth, newMapHeight) * 0.8 : Math.min(newWidth, newMapHeight) * 1.0) : 
+          Math.min(newWidth, newHeight) * 1.45)
         .translate([
-          (newWidth + padding * 2) / 2,
-          newHeight / 2 + newVerticalPadding/2
+          (newWidth + newPadding * 2) / 2,
+          (isMobile ? newMapHeight : newHeight) / 2 + newVerticalPadding/2
         ]);
       
       regions.attr("d", path as any);
+      
+      // Переинициализация зума при изменении размера экрана
+      if (isMobile && zoomBehaviorRef.current) {
+        // Сбрасываем зум при resize
+        svg.call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
+        setZoomLevel(1);
+      } else if (!isMobile && zoomBehaviorRef.current) {
+        // Отключаем зум на десктопе
+        svg.on(".zoom", null);
+        zoomBehaviorRef.current = null;
+        g.attr("transform", `translate(0, ${newVerticalPadding/2})`);
+        setZoomLevel(1);
+      }
     };
 
     window.addEventListener('resize', handleResize);
 
     return () => {
       window.removeEventListener('resize', handleResize);
+      // Очищаем ссылки при размонтировании
+      zoomBehaviorRef.current = null;
+      svgRef.current = null;
     };
   }, []);
 
@@ -893,6 +1081,28 @@ export const RussiaMap: React.FC = () => {
         </TopRecipesContent>
       </TopRecipesContainer>
       <MapWrapper ref={mapRef} />
+      <ZoomControls>
+        <ZoomButton 
+          onClick={handleZoomIn}
+          disabled={zoomLevel >= 3}
+          aria-label="Увеличить карту"
+        >
+          +
+        </ZoomButton>
+        <ZoomButton 
+          onClick={handleZoomOut}
+          disabled={zoomLevel <= 0.5}
+          aria-label="Уменьшить карту"
+        >
+          −
+        </ZoomButton>
+        <ResetZoomButton 
+          onClick={handleResetZoom}
+          aria-label="Сбросить масштаб"
+        >
+          Сброс
+        </ResetZoomButton>
+      </ZoomControls>
       <RegionListContainer>
         <SearchContainer>
           <SearchInput
