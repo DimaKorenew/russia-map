@@ -19,7 +19,7 @@ const MapWrapper = styled.div`
   width: 100%;
   height: 100vh;
   position: relative;
-  background: #f8fafc;
+  background: white;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -226,7 +226,7 @@ const RecipeLink = styled.a`
 const RegionRecipeItem = styled.div`
   padding: 12px;
   border-radius: 8px;
-  background: #f8fafc;
+  background: white;
   margin-bottom: 8px;
   transition: all 0.2s ease;
 
@@ -365,7 +365,7 @@ const regionTranslations: { [key: string]: string } = {
 };
 
 const RegionListContainer = styled.div`
-  background: white;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   padding: 40px 20px;
   width: 100%;
@@ -430,7 +430,7 @@ const SearchInput = styled.input`
   border-radius: 12px;
   outline: none;
   transition: all 0.3s ease;
-  background: #f8fafc;
+  background: white;
 
   @media (min-width: 768px) {
     font-size: 18px;
@@ -474,21 +474,22 @@ const SearchIcon = styled.span`
 `;
 
 const RegionItem = styled.div`
-  background: #f8fafc;
+  background: white;
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transform: translateX(4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
 `;
 
 const RegionHeader = styled.div<{ isActive: boolean }>`
   padding: 20px 24px;
-  background: ${props => props.isActive ? '#1e293b' : '#f8fafc'};
+  background: ${props => props.isActive ? '#1e293b' : 'white'};
   color: ${props => props.isActive ? 'white' : '#1e293b'};
   cursor: pointer;
   font-weight: 500;
@@ -549,11 +550,12 @@ const ChevronIcon = styled.span<{ isOpen: boolean }>`
 `;
 
 const TopRecipesContainer = styled.div`
-  background: white;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   padding: 40px 20px;
   width: 100%;
   box-sizing: border-box;
   border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 
   @media (min-width: 768px) {
     padding: 60px 20px;
@@ -667,7 +669,11 @@ const MapDescription = styled.div`
   margin: 0 auto 30px;
   font-family: system-ui, -apple-system, sans-serif;
   max-width: 800px;
-  padding: 0 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
 
   @media (min-width: 768px) {
     font-size: 18px;
@@ -677,13 +683,50 @@ const MapDescription = styled.div`
   @media (max-width: 768px) {
     font-size: 15px;
     margin-bottom: 20px;
-    padding: 0 16px;
+    padding: 16px;
   }
 
   @media (max-width: 480px) {
     font-size: 14px;
     margin-bottom: 16px;
-    padding: 0 12px;
+    padding: 12px;
+  }
+`;
+
+const MapTitleSection = styled.div`
+  padding: 40px 20px 20px;
+  text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 30px 16px 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 12px 12px;
+  }
+`;
+
+const MapPageTitle = styled.h1`
+  font-size: 32px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+  text-align: center;
+  font-family: system-ui, -apple-system, sans-serif;
+
+  @media (min-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+    margin-bottom: 12px;
   }
 `;
 
@@ -702,27 +745,26 @@ const TopRecipesList = styled.div`
 `;
 
 const TopRecipeItem = styled.div`
-  background: #f8fafc;
+  background: white;
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s ease;
   border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 
   &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transform: translateX(4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
   }
 
   @media (max-width: 768px) {
-    border-radius: 0;
-    border-left: none;
-    border-right: none;
+    border-radius: 8px;
   }
 `;
 
 const TopRecipeHeader = styled.div`
   padding: 20px 24px;
-  background: #f8fafc;
+  background: white;
   color: #1e293b;
   font-weight: 500;
   display: flex;
@@ -777,6 +819,120 @@ const RecipeNumber = styled.span`
     height: 24px;
     font-size: 12px;
     margin-right: 10px;
+  }
+`;
+
+const Footer = styled.footer`
+  background-color: #1e293b;
+  color: white;
+  padding: 40px 0 20px;
+  width: 100%;
+  
+  @media (max-width: 768px) {
+    padding: 30px 0 15px;
+  }
+`;
+
+const FooterContent = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+`;
+
+const FooterTop = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  margin-bottom: 30px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+`;
+
+const FooterSection = styled.div`
+  h4 {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    
+    @media (max-width: 768px) {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    
+    li {
+      margin-bottom: 8px;
+      
+      a {
+        color: #94a3b8;
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.2s ease;
+        
+        &:hover {
+          color: white;
+        }
+        
+        @media (max-width: 768px) {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+`;
+
+const FooterBottom = styled.div`
+  border-top: 1px solid #374151;
+  padding-top: 20px;
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+  
+  @media (max-width: 768px) {
+    padding-top: 15px;
+    font-size: 12px;
+  }
+`;
+
+const SocialLinks = styled.div`
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 15px;
+  
+  a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      font-size: 13px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
   }
 `;
 
@@ -1290,7 +1446,9 @@ export const RussiaMap: React.FC = () => {
           </TopRecipesContent>
         </TopRecipesContainer>
       </FullWidthContainer>
-      <MapTitle>Интерактивная карта рецептов России</MapTitle>
+      <MapTitleSection>
+        <MapPageTitle>Интерактивная карта рецептов</MapPageTitle>
+      </MapTitleSection>
       <MapDescription>
         Мы собрали интерактивную карту самых популярных рецептов в регионах России.<br /><br />
         
@@ -1345,6 +1503,61 @@ export const RussiaMap: React.FC = () => {
           </RegionList>
         </RegionListContainer>
       </FullWidthContainer>
+      <Footer className="footer">
+        <FooterContent>
+          <FooterTop>
+            <FooterSection>
+              <h4>Рецепты</h4>
+              <ul>
+                <li><a href="#">Супы</a></li>
+                <li><a href="#">Вторые блюда</a></li>
+                <li><a href="#">Закуски</a></li>
+                <li><a href="#">Салаты</a></li>
+                <li><a href="#">Выпечка</a></li>
+                <li><a href="#">Десерты</a></li>
+              </ul>
+            </FooterSection>
+            <FooterSection>
+              <h4>Проекты</h4>
+              <ul>
+                <li><a href="#">Кулинарная студия</a></li>
+                <li><a href="#">Планета Здоровья</a></li>
+                <li><a href="#">Рецепты Юлии Высоцкой</a></li>
+                <li><a href="#">Сборник ПП-десертов</a></li>
+              </ul>
+            </FooterSection>
+            <FooterSection>
+              <h4>О нас</h4>
+              <ul>
+                <li><a href="#">О компании</a></li>
+                <li><a href="#">Реклама</a></li>
+                <li><a href="#">Контакты</a></li>
+                <li><a href="#">Помощь</a></li>
+                <li><a href="#">Карта сайта</a></li>
+              </ul>
+            </FooterSection>
+            <FooterSection>
+              <h4>Юридическая информация</h4>
+              <ul>
+                <li><a href="#">Политика конфиденциальности</a></li>
+                <li><a href="#">Персональные данные</a></li>
+                <li><a href="#">Правила</a></li>
+              </ul>
+            </FooterSection>
+          </FooterTop>
+          <FooterBottom>
+            <div>© 2003–2025 ООО «Едимдома.ру» — рецепты вкусных блюд. Все права защищены</div>
+            <SocialLinks>
+              <a href="#">ВКонтакте</a>
+              <a href="#">Одноклассники</a>
+              <a href="#">Pinterest</a>
+              <a href="#">YouTube</a>
+              <a href="#">Telegram</a>
+              <a href="#">Дзен</a>
+            </SocialLinks>
+          </FooterBottom>
+        </FooterContent>
+      </Footer>
     </MapContainer>
   );
 }; 
