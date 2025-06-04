@@ -656,6 +656,93 @@
           "url": "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey"
         }
       ]
+    },
+    "Ненецкий АО": {
+      "recipes": []
+    },
+    "Чукотский АО": {
+      "recipes": []
+    },
+    "Еврейская АО": {
+      "recipes": [
+        {
+          "id": "папоротник-по-корейски",
+          "name": "Папоротник по-корейски",
+          "url": "https://www.edimdoma.ru/retsepty/102130-paporotnik-po-koreyski"
+        }
+      ]
+    },
+    "Магаданская область": {
+      "recipes": [
+        {
+          "id": "блины-на-кипятке",
+          "name": "Блины на кипятке",
+          "url": "https://www.edimdoma.ru/retsepty/72674-bliny-na-kipyatke"
+        }
+      ]
+    },
+    "Сахалинская область": {
+      "recipes": [
+        {
+          "id": "папоротник-по-корейски",
+          "name": "Папоротник по-корейски",
+          "url": "https://www.edimdoma.ru/retsepty/102130-paporotnik-po-koreyski"
+        }
+      ]
+    },
+    "Чувашия": {
+      "recipes": [
+        {
+          "id": "королевская-ватрушка",
+          "name": "Королевская ватрушка",
+          "url": "https://www.edimdoma.ru/retsepty/76677-korolevskaya-vatrushka"
+        }
+      ]
+    },
+    "Марий Эл": {
+      "recipes": [
+        {
+          "id": "суп-из-крапивы-с-мясом-и-яйцом",
+          "name": "Суп из крапивы с мясом и яйцом",
+          "url": "https://www.edimdoma.ru/retsepty/146063-sup-iz-krapivy-s-myasom-i-yaytsom"
+        }
+      ]
+    },
+    "Мордовия": {
+      "recipes": [
+        {
+          "id": "булочки-синнабон-с-корицей",
+          "name": "Булочки синнабон с корицей",
+          "url": "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey"
+        }
+      ]
+    },
+    "Кировская область": {
+      "recipes": [
+        {
+          "id": "салат-лаззат-с-хрустящими-баклажанами",
+          "name": "Салат Лаззат с хрустящими баклажанами",
+          "url": "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami"
+        }
+      ]
+    },
+    "Пензенская область": {
+      "recipes": [
+        {
+          "id": "салат-лаззат-с-хрустящими-баклажанами",
+          "name": "Салат Лаззат с хрустящими баклажанами",
+          "url": "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami"
+        }
+      ]
+    },
+    "Тамбовская область": {
+      "recipes": [
+        {
+          "id": "меренговый-рулет",
+          "name": "Меренговый рулет",
+          "url": "https://www.edimdoma.ru/retsepty/124814-merengovyy-rulet"
+        }
+      ]
     }
   }
 }
