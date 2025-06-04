@@ -558,7 +558,7 @@ const TopRecipesContainer = styled.div`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 
   @media (min-width: 768px) {
-    padding: 60px 20px;
+    padding: 30px 20px 60px;
   }
 
   @media (max-width: 768px) {
@@ -594,17 +594,17 @@ const TopRecipesTitle = styled.h2`
   font-family: system-ui, -apple-system, sans-serif;
 
   @media (min-width: 768px) {
-    font-size: 28px;
+    font-size: 36px;
     margin-bottom: 40px;
   }
 
   @media (max-width: 768px) {
-    font-size: 22px;
+    font-size: 28px;
     margin-bottom: 20px;
   }
 
   @media (max-width: 480px) {
-    font-size: 20px;
+    font-size: 24px;
     margin-bottom: 16px;
   }
 `;
@@ -845,9 +845,14 @@ const FooterContent = styled.div`
 
 const FooterTop = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 30px;
   margin-bottom: 30px;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+  }
   
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -856,19 +861,26 @@ const FooterTop = styled.div`
   }
 `;
 
-const FooterSection = styled.div`
-  h4 {
-    color: white;
-    font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 15px;
-    
-    @media (max-width: 768px) {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
+const FooterTitle = styled.h2`
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 40px 0;
+  font-family: system-ui, -apple-system, sans-serif;
+  
+  @media (max-width: 768px) {
+    font-size: 24px;
+    margin-bottom: 30px;
   }
   
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+`;
+
+const FooterSection = styled.div`
   ul {
     list-style: none;
     padding: 0;
@@ -890,6 +902,31 @@ const FooterSection = styled.div`
         @media (max-width: 768px) {
           font-size: 13px;
         }
+        
+        &.category-title {
+          color: white;
+          font-weight: 600;
+          font-size: 16px;
+          margin-bottom: 12px;
+          display: block;
+          
+          @media (max-width: 768px) {
+            font-size: 15px;
+            margin-bottom: 10px;
+          }
+          
+          &:hover {
+            color: #e2e8f0;
+          }
+        }
+      }
+      
+      &.subcategory {
+        margin-bottom: 6px;
+      }
+      
+      &:first-child {
+        margin-bottom: 12px;
       }
     }
   }
@@ -1505,55 +1542,51 @@ export const RussiaMap: React.FC = () => {
       </FullWidthContainer>
       <Footer className="footer">
         <FooterContent>
+          <FooterTitle>Популярные категории рецептов</FooterTitle>
           <FooterTop>
             <FooterSection>
-              <h4>Рецепты</h4>
               <ul>
-                <li><a href="#">Супы</a></li>
-                <li><a href="#">Вторые блюда</a></li>
-                <li><a href="#">Закуски</a></li>
-                <li><a href="#">Салаты</a></li>
-                <li><a href="#">Выпечка</a></li>
-                <li><a href="#">Десерты</a></li>
+                <li><a href="https://www.edimdoma.ru/retsepty/tags/161-supy-i-bulony" className="category-title" target="_blank" rel="noopener noreferrer">Супы</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/4033-kurinyy-sup" target="_blank" rel="noopener noreferrer">Куриный суп</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/162-gribnye-supy" target="_blank" rel="noopener noreferrer">Грибной суп</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/4776-syrnyy-sup" target="_blank" rel="noopener noreferrer">Сырный суп</a></li>
               </ul>
             </FooterSection>
             <FooterSection>
-              <h4>Проекты</h4>
               <ul>
-                <li><a href="#">Кулинарная студия</a></li>
-                <li><a href="#">Планета Здоровья</a></li>
-                <li><a href="#">Рецепты Юлии Высоцкой</a></li>
-                <li><a href="#">Сборник ПП-десертов</a></li>
+                <li><a href="https://www.edimdoma.ru/retsepty/tags/425-salaty" className="category-title" target="_blank" rel="noopener noreferrer">Салаты</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/10606-salaty-iz-myasa" target="_blank" rel="noopener noreferrer">Салаты из мяса</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/281-iz-kuritsy" target="_blank" rel="noopener noreferrer">Салат с курицей</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/10607-salaty-s-govyadinoy" target="_blank" rel="noopener noreferrer">Салаты с говядиной</a></li>
               </ul>
             </FooterSection>
             <FooterSection>
-              <h4>О нас</h4>
               <ul>
-                <li><a href="#">О компании</a></li>
-                <li><a href="#">Реклама</a></li>
-                <li><a href="#">Контакты</a></li>
-                <li><a href="#">Помощь</a></li>
-                <li><a href="#">Карта сайта</a></li>
+                <li><a href="https://www.edimdoma.ru/retsepty/tags/322-kashi" className="category-title" target="_blank" rel="noopener noreferrer">Каша</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/1508-pshennaya" target="_blank" rel="noopener noreferrer">Пшенная каша</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/8111-mannaya-kasha" target="_blank" rel="noopener noreferrer">Манная каша</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/5661-risovaya-kasha" target="_blank" rel="noopener noreferrer">Рисовая каша</a></li>
               </ul>
             </FooterSection>
             <FooterSection>
-              <h4>Юридическая информация</h4>
               <ul>
-                <li><a href="#">Политика конфиденциальности</a></li>
-                <li><a href="#">Персональные данные</a></li>
-                <li><a href="#">Правила</a></li>
+                <li><a href="https://www.edimdoma.ru/retsepty/tags/189-deserty" className="category-title" target="_blank" rel="noopener noreferrer">Десерты</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/193-torty" target="_blank" rel="noopener noreferrer">Торты</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/190-konfety" target="_blank" rel="noopener noreferrer">Рецепты конфет</a></li>
+                <li className="subcategory"><a href="https://www.edimdoma.ru/retsepty/tags/200-morozhenoe" target="_blank" rel="noopener noreferrer">Мороженое</a></li>
               </ul>
             </FooterSection>
           </FooterTop>
           <FooterBottom>
-            <div>© 2003–2025 ООО «Едимдома.ру» — рецепты вкусных блюд. Все права защищены</div>
+            <div>© 2003–2025 ООО «<a href="https://www.edimdoma.ru/" target="_blank" rel="noopener noreferrer" style={{color: '#94a3b8', textDecoration: 'none'}}>Едимдома.ру</a>» — рецепты вкусных блюд. Все права защищены</div>
             <SocialLinks>
-              <a href="#">ВКонтакте</a>
-              <a href="#">Одноклассники</a>
-              <a href="#">Pinterest</a>
-              <a href="#">YouTube</a>
-              <a href="#">Telegram</a>
-              <a href="#">Дзен</a>
+              <a href="https://vk.com/edimdoma_ru" target="_blank" rel="noopener noreferrer">ВКонтакте</a>
+              <a href="https://ok.ru/edimdomaru" target="_blank" rel="noopener noreferrer">Одноклассники</a>
+              <a href="https://ru.pinterest.com/edimdoma/" target="_blank" rel="noopener noreferrer">Pinterest</a>
+              <a href="https://www.youtube.com/user/VysotskayaJulia" target="_blank" rel="noopener noreferrer">YouTube</a>
+              <a href="https://tgrm.github.io/edimdomaru" target="_blank" rel="noopener noreferrer">Telegram</a>
+              <a href="https://dzen.ru/edimdoma.ru" target="_blank" rel="noopener noreferrer">Дзен</a>
+              <a href="https://rutube.ru/u/juliavysotskaya/videos/" target="_blank" rel="noopener noreferrer">Rutube</a>
             </SocialLinks>
           </FooterBottom>
         </FooterContent>
