@@ -199,6 +199,7 @@ interface Recipe {
   id: string;
   name: string;
   url: string;
+  views: string;
 }
 
 interface RegionRecipes {
@@ -822,6 +823,36 @@ const RecipeNumber = styled.span`
   }
 `;
 
+const RecipeContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+`;
+
+const RecipeViews = styled.div`
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 400;
+  margin-top: 4px;
+
+  @media (min-width: 768px) {
+    font-size: 15px;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+    margin-top: 3px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+`;
+
 const Footer = styled.footer`
   background-color: #1e293b;
   color: white;
@@ -975,16 +1006,16 @@ const SocialLinks = styled.div`
 
 // Топ 10 рецептов в мае
 const topRecipes = [
-  { id: 1, name: "Салат «Лаззат» с хрустящими баклажанами", url: "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami" },
-  { id: 2, name: "Булочки синнабон с корицей", url: "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey" },
-  { id: 3, name: "Меренговый рулет", url: "https://www.edimdoma.ru/retsepty/124814-merengovyy-rulet" },
-  { id: 4, name: "Тирамису классический", url: "https://www.edimdoma.ru/retsepty/45966-tiramisu-klassicheskiy" },
-  { id: 5, name: "Королевская ватрушка", url: "https://www.edimdoma.ru/retsepty/76677-korolevskaya-vatrushka" },
-  { id: 6, name: "Творожное печенье «Гусиные лапки»", url: "https://edimdoma.ru/retsepty/76387-tvorozhnoe-pechenie-gusinye-lapki" },
-  { id: 7, name: "Творожная запеканка (как в детском саду)", url: "https://www.edimdoma.ru/retsepty/44250-tvorozhnaya-zapekanka-kak-v-detskom-sadu" },
-  { id: 8, name: "Кекс в кружке", url: "https://www.edimdoma.ru/retsepty/48979-keks-v-kruzhke" },
-  { id: 9, name: "Классический сметанник из песочного теста", url: "https://www.edimdoma.ru/retsepty/72674-bliny-na-kipyatke" },
-  { id: 10, name: "Блины на кипятке", url: "https://www.edimdoma.ru/retsepty/46203-vanilnyy-smetannik-iz-pesochnogo-testa" }
+  { id: 1, name: "Салат «Лаззат» с хрустящими баклажанами", url: "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami", views: "100 тыс. просмотров" },
+  { id: 2, name: "Булочки синнабон с корицей", url: "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey", views: "100 тыс. просмотров" },
+  { id: 3, name: "Меренговый рулет", url: "https://www.edimdoma.ru/retsepty/124814-merengovyy-rulet", views: "100 тыс. просмотров" },
+  { id: 4, name: "Тирамису классический", url: "https://www.edimdoma.ru/retsepty/45966-tiramisu-klassicheskiy", views: "100 тыс. просмотров" },
+  { id: 5, name: "Королевская ватрушка", url: "https://www.edimdoma.ru/retsepty/76677-korolevskaya-vatrushka", views: "100 тыс. просмотров" },
+  { id: 6, name: "Творожное печенье «Гусиные лапки»", url: "https://edimdoma.ru/retsepty/76387-tvorozhnoe-pechenie-gusinye-lapki", views: "100 тыс. просмотров" },
+  { id: 7, name: "Творожная запеканка (как в детском саду)", url: "https://www.edimdoma.ru/retsepty/44250-tvorozhnaya-zapekanka-kak-v-detskom-sadu", views: "100 тыс. просмотров" },
+  { id: 8, name: "Кекс в кружке", url: "https://www.edimdoma.ru/retsepty/48979-keks-v-kruzhke", views: "100 тыс. просмотров" },
+  { id: 9, name: "Классический сметанник из песочного теста", url: "https://www.edimdoma.ru/retsepty/72674-bliny-na-kipyatke", views: "100 тыс. просмотров" },
+  { id: 10, name: "Блины на кипятке", url: "https://www.edimdoma.ru/retsepty/46203-vanilnyy-smetannik-iz-pesochnogo-testa", views: "100 тыс. просмотров" }
 ];
 
 export const RussiaMap: React.FC = () => {
@@ -1469,13 +1500,16 @@ export const RussiaMap: React.FC = () => {
                 <TopRecipeItem key={recipe.id}>
                   <TopRecipeHeader>
                     <RecipeNumber>{recipe.id}</RecipeNumber>
-                    <RecipeLink 
-                      href={recipe.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {recipe.name}
-                    </RecipeLink>
+                    <RecipeContent>
+                      <RecipeLink 
+                        href={recipe.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {recipe.name}
+                      </RecipeLink>
+                      <RecipeViews>{recipe.views}</RecipeViews>
+                    </RecipeContent>
                   </TopRecipeHeader>
                 </TopRecipeItem>
               ))}
