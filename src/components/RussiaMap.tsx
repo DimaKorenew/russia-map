@@ -218,6 +218,20 @@ const RecipeLink = styled.a`
   display: block;
   width: 100%;
   transition: all 0.2s ease;
+  font-size: 18px;
+  font-weight: 500;
+
+  @media (min-width: 768px) {
+    font-size: 30px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 17px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 
   &:hover {
     color: #2563eb;
@@ -1006,16 +1020,16 @@ const SocialLinks = styled.div`
 
 // Топ 10 рецептов в мае
 const topRecipes = [
-  { id: 1, name: "Салат «Лаззат» с хрустящими баклажанами", url: "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami", views: "100 тыс. просмотров" },
-  { id: 2, name: "Булочки синнабон с корицей", url: "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey", views: "100 тыс. просмотров" },
-  { id: 3, name: "Меренговый рулет", url: "https://www.edimdoma.ru/retsepty/124814-merengovyy-rulet", views: "100 тыс. просмотров" },
-  { id: 4, name: "Тирамису классический", url: "https://www.edimdoma.ru/retsepty/45966-tiramisu-klassicheskiy", views: "100 тыс. просмотров" },
-  { id: 5, name: "Королевская ватрушка", url: "https://www.edimdoma.ru/retsepty/76677-korolevskaya-vatrushka", views: "100 тыс. просмотров" },
-  { id: 6, name: "Творожное печенье «Гусиные лапки»", url: "https://edimdoma.ru/retsepty/76387-tvorozhnoe-pechenie-gusinye-lapki", views: "100 тыс. просмотров" },
-  { id: 7, name: "Творожная запеканка (как в детском саду)", url: "https://www.edimdoma.ru/retsepty/44250-tvorozhnaya-zapekanka-kak-v-detskom-sadu", views: "100 тыс. просмотров" },
-  { id: 8, name: "Кекс в кружке", url: "https://www.edimdoma.ru/retsepty/48979-keks-v-kruzhke", views: "100 тыс. просмотров" },
-  { id: 9, name: "Классический сметанник из песочного теста", url: "https://www.edimdoma.ru/retsepty/72674-bliny-na-kipyatke", views: "100 тыс. просмотров" },
-  { id: 10, name: "Блины на кипятке", url: "https://www.edimdoma.ru/retsepty/46203-vanilnyy-smetannik-iz-pesochnogo-testa", views: "100 тыс. просмотров" }
+  { id: 1, name: "Булочки синнабон с корицей", url: "https://www.edimdoma.ru/retsepty/141367-bulochki-sinnabon-s-koritsey", views: "707 тыс. просмотров" },
+  { id: 2, name: "Меренговый рулет", url: "https://www.edimdoma.ru/retsepty/124814-merengovyy-rulet", views: "510 тыс. просмотров" },
+  { id: 3, name: "Тирамису классический", url: "https://www.edimdoma.ru/retsepty/45966-tiramisu-klassicheskiy", views: "340 тыс. просмотров" },
+  { id: 4, name: "Салат «Лаззат» с хрустящими баклажанами", url: "https://www.edimdoma.ru/retsepty/145073-salat-lazzat-s-hrustyaschimi-baklazhanami", views: "316 тыс. просмотров" },
+  { id: 5, name: "Королевская ватрушка", url: "https://www.edimdoma.ru/retsepty/76677-korolevskaya-vatrushka", views: "275 тыс. просмотров" },
+  { id: 6, name: "Блины на кипятке", url: "https://www.edimdoma.ru/retsepty/72674-bliny-na-kipyatke", views: "207 тыс. просмотров" },
+  { id: 7, name: "Творожное печенье «Гусиные лапки»", url: "https://www.edimdoma.ru/retsepty/76387-tvorozhnoe-pechenie-gusinye-lapki", views: "205 тыс. просмотров" },
+  { id: 8, name: "Творожная запеканка (как в детском саду)", url: "https://www.edimdoma.ru/retsepty/44250-tvorozhnaya-zapekanka-kak-v-detskom-sadu", views: "171 тыс. просмотров" },
+  { id: 9, name: "Традиционное корейское кимчи", url: "https://www.edimdoma.ru/retsepty/37514-traditsionnoe-koreyskoe-kimchi", views: "167 тыс. просмотров" },
+  { id: 10, name: "Кыстыбый с картофелем", url: "https://www.edimdoma.ru/retsepty/63927-kystybyy-s-kartofelem", views: "151 тыс. просмотров" }
 ];
 
 export const RussiaMap: React.FC = () => {
@@ -1490,10 +1504,9 @@ export const RussiaMap: React.FC = () => {
       <FullWidthContainer className="sc-hawdNJ fZSglL">
         <TopRecipesContainer>
           <TopRecipesContent>
-            <TopRecipesTitle>Популярные рецепты в мае</TopRecipesTitle>
+            <TopRecipesTitle>Топ-10 самых популярных рецептов EdimDoma.ru в 2025 года</TopRecipesTitle>
             <DescriptionText>
-              Мы проанализировали данные за май<br />
-              И выделили 10 самых популярных рецептов на сайте edimdoma.ru
+              Ежемесячно сайт edimdoma.ru посещают около 10 миллионов человек, чтобы найти интересные рецепты. Мы отобрали самые популярные из них в 2025 году
             </DescriptionText>
             <TopRecipesList>
               {topRecipes.map((recipe) => (
