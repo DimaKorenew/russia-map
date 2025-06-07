@@ -1384,7 +1384,7 @@ export const RussiaMap: React.FC = () => {
           .attr("font-size", isMobile ? (isSmallMobile ? "12px" : "13px") : "14px")
           .attr("font-style", "italic")
           .style("pointer-events", "none")
-          .text("Рецепты скоро появятся");
+          .text("нет данных");
       }
     };
 
@@ -1527,7 +1527,12 @@ export const RussiaMap: React.FC = () => {
             <SearchIcon>🔍</SearchIcon>
           </SearchContainer>
           <RegionList>
-            {filteredRegions.slice(0, 3).map((region) => (
+            {(searchQuery 
+              ? filteredRegions 
+              : filteredRegions.filter(region => 
+                  ['Москва', 'Санкт-Петербург', 'Краснодарский край'].includes(region.russianName)
+                )
+            ).map((region) => (
               <RegionItem key={region.englishName}>
                 <RegionHeader 
                   isActive={expandedRegion === region.russianName}
