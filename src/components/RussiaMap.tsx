@@ -679,8 +679,8 @@ const MapTitle = styled.h2`
 const MapDescription = styled.div`
   font-size: 16px;
   color: #475569;
-  text-align: center;
-  line-height: 1.6;
+  text-align: left;
+  line-height: 1.5;
   margin: 0 auto 30px;
   font-family: system-ui, -apple-system, sans-serif;
   max-width: 800px;
@@ -689,6 +689,23 @@ const MapDescription = styled.div`
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
+  
+  p {
+    margin: 0 0 10px 0;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+  
+  a {
+    color: #2563eb;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 
   @media (min-width: 768px) {
     font-size: 18px;
@@ -1505,14 +1522,13 @@ export const RussiaMap: React.FC = () => {
         <MapPageTitle>Интерактивная карта рецептов</MapPageTitle>
       </MapTitleSection>
       <MapDescription>
-        Мы собрали интерактивную карту самых популярных рецептов в регионах России.<br /><br />
+        <p><a href="https://www.edimdoma.ru/" target="_blank" rel="noopener noreferrer">EdimDoma.ru</a> ежемесячно посещают около 10 миллионов пользователей изучая более 90 тысяч рецептов</p>
         
-        Теперь, кликая на любой из них, вы можете узнать, какое блюдо стало фаворитом у местных жителей этой весной. 
-        К сожалению, по некоторым регионам информации нет.<br /><br />
+        <p>На основе этих данных мы собрали интерактивную карту самых популярных блюд в регионах России за 2025 год</p>
         
-        Предпочтения в разных уголках страны заметно различаются: в Калининграде лидирует литовский борщ, в Татарстане и Башкортостане — кыстыбый с картофелем, а в Хабаровском крае — папоротник по-корейски.<br /><br />
+        <p>Теперь вы можете кликнуть на любой регион и узнать, какое блюдо стало настоящим фаворитом у его жителей. В некоторых регионах нужной информации, к сожалению, нет.</p>
         
-        Исследуйте и вдохновляйтесь кулинарными предпочтениями со всей страны!
+        <p>Изучайте карту и вдохновляйтесь рецептами со всех уголков России!</p>
       </MapDescription>
       <MapWrapper ref={mapRef} />
       <FullWidthContainer className="sc-hawdNJ fZSglL">
@@ -1567,9 +1583,7 @@ export const RussiaMap: React.FC = () => {
         <TopRecipesContainer>
           <TopRecipesContent>
             <TopRecipesTitle>Топ-10 самых популярных рецептов EdimDoma.ru в 2025 года</TopRecipesTitle>
-            <DescriptionText>
-              Ежемесячно сайт edimdoma.ru посещают около 10 миллионов человек, чтобы найти интересные рецепты. Мы отобрали самые популярные из них в 2025 году
-            </DescriptionText>
+
             <TopRecipesList>
               {topRecipes.map((recipe) => (
                 <TopRecipeItem key={recipe.id}>
