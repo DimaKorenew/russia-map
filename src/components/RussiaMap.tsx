@@ -1079,7 +1079,7 @@ export const RussiaMap: React.FC = () => {
     .map(([key, value]) => ({ 
       englishName: key, 
       russianName: value,
-      recipes: (recipesData as RecipesData).regions[value]?.recipes || []
+      recipes: (recipesData as any).regions[value]?.recipes || []
     }))
     .filter(region => 
       region.russianName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -1204,7 +1204,7 @@ export const RussiaMap: React.FC = () => {
 
       const englishName = d.properties?.NAME_1 || 'Unknown Region';
       const name = regionTranslations[englishName] || 'Неизвестный регион';
-      const recipes = (recipesData as RecipesData).regions[name]?.recipes || [];
+      const recipes = (recipesData as any).regions[name]?.recipes || [];
       
       // Адаптивные настройки для всплывающих окон
       const isMobile = window.innerWidth <= 768;
@@ -1501,35 +1501,6 @@ export const RussiaMap: React.FC = () => {
 
   return (
     <MapContainer>
-      <FullWidthContainer className="sc-hawdNJ fZSglL">
-        <TopRecipesContainer>
-          <TopRecipesContent>
-            <TopRecipesTitle>Топ-10 самых популярных рецептов EdimDoma.ru в 2025 года</TopRecipesTitle>
-            <DescriptionText>
-              Ежемесячно сайт edimdoma.ru посещают около 10 миллионов человек, чтобы найти интересные рецепты. Мы отобрали самые популярные из них в 2025 году
-            </DescriptionText>
-            <TopRecipesList>
-              {topRecipes.map((recipe) => (
-                <TopRecipeItem key={recipe.id}>
-                  <TopRecipeHeader>
-                    <RecipeNumber>{recipe.id}</RecipeNumber>
-                    <RecipeContent>
-                      <RecipeLink 
-                        href={recipe.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {recipe.name}
-                      </RecipeLink>
-                      <RecipeViews>{recipe.views}</RecipeViews>
-                    </RecipeContent>
-                  </TopRecipeHeader>
-                </TopRecipeItem>
-              ))}
-            </TopRecipesList>
-          </TopRecipesContent>
-        </TopRecipesContainer>
-      </FullWidthContainer>
       <MapTitleSection>
         <MapPageTitle>Интерактивная карта рецептов</MapPageTitle>
       </MapTitleSection>
@@ -1556,7 +1527,7 @@ export const RussiaMap: React.FC = () => {
             <SearchIcon>🔍</SearchIcon>
           </SearchContainer>
           <RegionList>
-            {filteredRegions.map((region) => (
+            {filteredRegions.slice(0, 3).map((region) => (
               <RegionItem key={region.englishName}>
                 <RegionHeader 
                   isActive={expandedRegion === region.russianName}
@@ -1586,6 +1557,35 @@ export const RussiaMap: React.FC = () => {
             ))}
           </RegionList>
         </RegionListContainer>
+      </FullWidthContainer>
+      <FullWidthContainer className="sc-hawdNJ fZSglL">
+        <TopRecipesContainer>
+          <TopRecipesContent>
+            <TopRecipesTitle>Топ-10 самых популярных рецептов EdimDoma.ru в 2025 года</TopRecipesTitle>
+            <DescriptionText>
+              Ежемесячно сайт edimdoma.ru посещают около 10 миллионов человек, чтобы найти интересные рецепты. Мы отобрали самые популярные из них в 2025 году
+            </DescriptionText>
+            <TopRecipesList>
+              {topRecipes.map((recipe) => (
+                <TopRecipeItem key={recipe.id}>
+                  <TopRecipeHeader>
+                    <RecipeNumber>{recipe.id}</RecipeNumber>
+                    <RecipeContent>
+                      <RecipeLink 
+                        href={recipe.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {recipe.name}
+                      </RecipeLink>
+                      <RecipeViews>{recipe.views}</RecipeViews>
+                    </RecipeContent>
+                  </TopRecipeHeader>
+                </TopRecipeItem>
+              ))}
+            </TopRecipesList>
+          </TopRecipesContent>
+        </TopRecipesContainer>
       </FullWidthContainer>
       <Footer className="footer">
         <FooterContent>
