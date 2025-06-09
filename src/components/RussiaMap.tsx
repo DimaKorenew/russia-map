@@ -728,6 +728,7 @@ const MapDescription = styled.div`
 const MapTitleSection = styled.div`
   padding: 40px 20px 20px;
   text-align: center;
+  position: relative;
 
   @media (max-width: 768px) {
     padding: 30px 16px 16px;
@@ -735,6 +736,31 @@ const MapTitleSection = styled.div`
 
   @media (max-width: 480px) {
     padding: 20px 12px 12px;
+  }
+`;
+
+const Logo = styled.img`
+  position: absolute;
+  top: 40px;
+  left: 40px;
+  height: 4.0625rem;
+  width: 12.1875rem;
+  background-size: contain;
+  z-index: 10;
+
+  @media (max-width: 1150px) {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin: 0 auto 16px;
+    display: block;
+    height: 50px;
+    width: auto;
+    content: url('https://e3.edimdoma.ru/assets/layout/header-logo-62682971ac00ab99dc6e222e36ce620a3292f91f50b77b1d37d157bec0c592ce.png');
+  }
+
+  @media (max-width: 480px) {
+    height: 50px;
   }
 `;
 
@@ -1679,6 +1705,10 @@ export const RussiaMap: React.FC = () => {
   return (
     <MapContainer>
       <MapTitleSection>
+        <Logo 
+          src="https://e1.edimdoma.ru/assets/layout/header-logo@2x-d6bd55e17937f04c25cbfefb0946708d926575347c284b531900257128c64bd2.png"
+          alt="EdimDoma.ru"
+        />
         <MapPageTitle>Интерактивная карта рецептов</MapPageTitle>
       </MapTitleSection>
       <MapDescription>
