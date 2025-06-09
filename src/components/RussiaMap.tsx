@@ -1057,6 +1057,7 @@ export const RussiaMap: React.FC = () => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const svgRef = useRef<d3.Selection<SVGSVGElement, unknown, null, undefined> | null>(null);
   const zoomBehaviorRef = useRef<d3.ZoomBehavior<SVGSVGElement, unknown> | null>(null);
+  const centerTranslateRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Функция для разбивки текста на строки
   const wrapText = (text: string, maxWidth: number, fontSize: number = 12): string[] => {
@@ -1115,25 +1116,29 @@ export const RussiaMap: React.FC = () => {
     const isMobile = width <= 768;
     const isSmallMobile = width <= 480;
     
-    const padding = isMobile ? (isSmallMobile ? 20 : 40) : 80;
+    const padding = isMobile ? (isSmallMobile ? 20 : 30) : 40;
     const verticalPadding = isMobile ? 
       (isSmallMobile ? height * 0.05 : height * 0.08) : 
-      height * 0.15;
+      height * 0.1;
     
     // Высота карты для мобильных устройств
     const mapHeight = isMobile ? 
       (isSmallMobile ? Math.min(400, height * 0.5) : Math.min(500, height * 0.6)) : 
       height;
 
+    // Доступная область для карты
+    const availableWidth = width - padding * 2;
+    const availableHeight = (isMobile ? mapHeight : height) - verticalPadding * 2;
+
     const svg = d3.select(mapRef.current)
       .append("svg")
       .attr("width", "100%")
       .attr("height", "100%")
       .attr("viewBox", [
-        -padding, 
-        -verticalPadding,
-        width + padding * 2,
-        mapHeight + verticalPadding * 2
+        0, 
+        0,
+        width,
+        isMobile ? mapHeight : height
       ].join(" "))
       .style("max-width", "100%")
       .style("height", "auto")
@@ -1150,10 +1155,11 @@ export const RussiaMap: React.FC = () => {
         .on("zoom", (event) => {
           const { transform } = event;
           setZoomLevel(transform.k);
-          g.attr("transform", `translate(${transform.x}, ${transform.y + verticalPadding/2}) scale(${transform.k})`);
+          g.attr("transform", `${transform} translate(${centerTranslateRef.current.x}, ${centerTranslateRef.current.y})`);
         });
 
       svg.call(zoom);
+      zoomBehaviorRef.current = zoom;
     }
 
     // Добавляем определение для фильтра тени
@@ -1179,28 +1185,48 @@ export const RussiaMap: React.FC = () => {
     feMerge.append("feMergeNode")
       .attr("in", "SourceGraphic");
 
-    // Группа для карты
+    // Создаем проекцию для вычисления bounds
+    const projection = d3.geoAlbers()
+      .rotate([-105, 0])
+      .center([2, 56])
+      .parallels([50, 70])
+      .scale(1000) // Временный масштаб для вычисления bounds
+      .translate([0, 0]); // Временная позиция
+
+    const path = d3.geoPath().projection(projection);
+
+    // Вычисляем bounds карты
+    const bounds = path.bounds(russiaGeoData as any);
+    const boundsWidth = bounds[1][0] - bounds[0][0];
+    const boundsHeight = bounds[1][1] - bounds[0][1];
+
+    // Вычисляем оптимальный масштаб, чтобы карта помещалась в доступное пространство
+    const scale = 0.9 * Math.min(availableWidth / boundsWidth, availableHeight / boundsHeight) * 1000;
+
+    // Вычисляем центр карты в bounds
+    const boundsCenter = [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2];
+
+    // Устанавливаем финальные параметры проекции
+    projection
+      .scale(scale)
+      .translate([width / 2, (isMobile ? mapHeight : height) / 2]);
+
+    // Пересчитываем bounds с новым масштабом
+    const newBounds = path.bounds(russiaGeoData as any);
+    const newBoundsCenter = [(newBounds[0][0] + newBounds[1][0]) / 2, (newBounds[0][1] + newBounds[1][1]) / 2];
+
+    // Корректируем перевод, чтобы центрировать карту
+    const centerTranslateX = width / 2 - newBoundsCenter[0];
+    const centerTranslateY = (isMobile ? mapHeight : height) / 2 - newBoundsCenter[1];
+
+    // Группа для карты с правильным центрированием
     const g = svg.append("g")
-      .attr("transform", isMobile ? `translate(0, ${verticalPadding/2})` : `translate(0, ${verticalPadding/2})`);
+      .attr("transform", `translate(${centerTranslateX}, ${centerTranslateY})`);
 
     // Группа для всплывающих окон с повышенным z-index
     const popupGroup = svg.append("g")
       .attr("class", "popup-group")
       .style("z-index", "1000");
-
-    const projection = d3.geoAlbers()
-      .rotate([-105, 0])
-      .center([2, 56])
-      .parallels([50, 70])
-      .scale(isMobile ? 
-        (isSmallMobile ? Math.min(width, mapHeight) * 0.8 : Math.min(width, mapHeight) * 1.0) : 
-        Math.min(width, height) * 1.45)
-      .translate([
-        (width + padding * 2) / 2,
-        (isMobile ? mapHeight : height) / 2 + verticalPadding/2
-      ]);
-
-    const path = d3.geoPath().projection(projection);
 
     const regions = g.selectAll("path")
       .data((russiaGeoData as any).features)
@@ -1263,34 +1289,28 @@ export const RussiaMap: React.FC = () => {
       
       const verticalOffset = 15;
       
+      // Получаем центроид региона с учетом трансформации
       const centroid = path.centroid(d);
+      const transformedCentroid = [centroid[0] + centerTranslateRef.current.x, centroid[1] + centerTranslateRef.current.y];
       
       // Проверяем границы экрана
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       
-      // Получаем координаты в пикселях относительно SVG
-      const svgElement = svg.node();
-      if (!svgElement) return;
+      // Корректируем позицию всплывающего окна
+      let adjustedX = transformedCentroid[0];
+      let adjustedY = transformedCentroid[1] - verticalOffset;
       
-      const svgRect = svgElement.getBoundingClientRect();
-      const point = {
-        x: centroid[0] + svgRect.left,
-        y: centroid[1] + svgRect.top - verticalOffset
-      };
-      
-      // Корректируем позицию
-      let adjustedX = centroid[0];
-      let adjustedY = centroid[1] - verticalOffset;
-      
-      if (point.x - popupWidth/2 < 0) {
-        adjustedX = centroid[0] + (popupWidth/2 - point.x);
-      } else if (point.x + popupWidth/2 > viewportWidth) {
-        adjustedX = centroid[0] - (point.x + popupWidth/2 - viewportWidth);
+      // Проверяем выход за границы по горизонтали
+      if (adjustedX - popupWidth/2 < 20) {
+        adjustedX = 20 + popupWidth/2;
+      } else if (adjustedX + popupWidth/2 > viewportWidth - 20) {
+        adjustedX = viewportWidth - 20 - popupWidth/2;
       }
       
-      if (point.y - popupHeight < 0) {
-        adjustedY = centroid[1] + verticalOffset + popupHeight + 20;
+      // Проверяем выход за границы по вертикали
+      if (adjustedY - popupHeight/2 < 20) {
+        adjustedY = transformedCentroid[1] + verticalOffset + popupHeight/2 + 20;
       }
       
       const popup = popupGroup.append("g")
@@ -1459,52 +1479,90 @@ export const RussiaMap: React.FC = () => {
       const newWidth = window.innerWidth;
       const newHeight = window.innerHeight;
       
-      // Адаптивные настройки для разных устройств (такие же как при инициализации)
+      // Адаптивные настройки для разных устройств
       const isMobile = newWidth <= 768;
       const isSmallMobile = newWidth <= 480;
       
-      const newPadding = isMobile ? (isSmallMobile ? 20 : 40) : 80;
+      const newPadding = isMobile ? (isSmallMobile ? 20 : 30) : 40;
       const newVerticalPadding = isMobile ? 
         (isSmallMobile ? newHeight * 0.05 : newHeight * 0.08) : 
-        newHeight * 0.15;
+        newHeight * 0.1;
       
       const newMapHeight = isMobile ? 
         (isSmallMobile ? Math.min(400, newHeight * 0.5) : Math.min(500, newHeight * 0.6)) : 
         newHeight;
       
+      // Доступная область для карты
+      const newAvailableWidth = newWidth - newPadding * 2;
+      const newAvailableHeight = (isMobile ? newMapHeight : newHeight) - newVerticalPadding * 2;
+
+      // Пересчитываем масштаб для нового размера
+      const tempProjection = d3.geoAlbers()
+        .rotate([-105, 0])
+        .center([2, 56])
+        .parallels([50, 70])
+        .scale(1000)
+        .translate([0, 0]);
+
+      const tempPath = d3.geoPath().projection(tempProjection);
+      const tempBounds = tempPath.bounds(russiaGeoData as any);
+      const tempBoundsWidth = tempBounds[1][0] - tempBounds[0][0];
+      const tempBoundsHeight = tempBounds[1][1] - tempBounds[0][1];
+
+      const newScale = 0.9 * Math.min(newAvailableWidth / tempBoundsWidth, newAvailableHeight / tempBoundsHeight) * 1000;
+
+      // Обновляем проекцию
+      projection
+        .scale(newScale)
+        .translate([newWidth / 2, (isMobile ? newMapHeight : newHeight) / 2]);
+
+      // Пересчитываем центрирование
+      const newBounds = path.bounds(russiaGeoData as any);
+      const newBoundsCenter = [(newBounds[0][0] + newBounds[1][0]) / 2, (newBounds[0][1] + newBounds[1][1]) / 2];
+      const newCenterTranslateX = newWidth / 2 - newBoundsCenter[0];
+      const newCenterTranslateY = (isMobile ? newMapHeight : newHeight) / 2 - newBoundsCenter[1];
+      
       svg.attr("viewBox", [
-        -newPadding,
-        -newVerticalPadding,
-        newWidth + newPadding * 2,
-        newMapHeight + newVerticalPadding * 2
+        0,
+        0,
+        newWidth,
+        isMobile ? newMapHeight : newHeight
       ].join(" "));
       
-      projection
-        .scale(isMobile ? 
-          (isSmallMobile ? Math.min(newWidth, newMapHeight) * 0.8 : Math.min(newWidth, newMapHeight) * 1.0) : 
-          Math.min(newWidth, newHeight) * 1.45)
-        .translate([
-          (newWidth + newPadding * 2) / 2,
-          (isMobile ? newMapHeight : newHeight) / 2 + newVerticalPadding/2
-        ]);
+      // Обновляем трансформацию группы карты
+      g.attr("transform", `translate(${newCenterTranslateX}, ${newCenterTranslateY})`);
       
       regions.attr("d", path as any);
       
       // Переинициализация зума при изменении размера экрана
-      if (isMobile) {
+      if (isMobile && !zoomBehaviorRef.current) {
+        const zoom = d3.zoom<SVGSVGElement, unknown>()
+          .scaleExtent([0.5, 3])
+                     .on("zoom", (event) => {
+             const { transform } = event;
+             setZoomLevel(transform.k);
+             g.attr("transform", `${transform} translate(${centerTranslateRef.current.x}, ${centerTranslateRef.current.y})`);
+           });
+
+        svg.call(zoom);
+        zoomBehaviorRef.current = zoom;
+      } else if (isMobile && zoomBehaviorRef.current) {
         // Сбрасываем зум при resize
-        if (zoomBehaviorRef.current) {
-          svg.call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
-        }
+        svg.call(zoomBehaviorRef.current.transform, d3.zoomIdentity);
         setZoomLevel(1);
       } else if (!isMobile && zoomBehaviorRef.current) {
         // Отключаем зум на десктопе
         svg.on(".zoom", null);
         zoomBehaviorRef.current = null;
-        g.attr("transform", `translate(0, ${newVerticalPadding/2})`);
         setZoomLevel(1);
       }
+
+             // Обновляем переменные для popup
+       centerTranslateRef.current = { x: newCenterTranslateX, y: newCenterTranslateY };
     };
+
+    // Сохраняем переменные для использования в popup
+    centerTranslateRef.current = { x: centerTranslateX, y: centerTranslateY };
 
     window.addEventListener('resize', handleResize);
 
