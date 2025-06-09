@@ -1116,10 +1116,10 @@ export const RussiaMap: React.FC = () => {
     const isMobile = width <= 768;
     const isSmallMobile = width <= 480;
     
-    const padding = isMobile ? (isSmallMobile ? 20 : 30) : 40;
+    const padding = isMobile ? (isSmallMobile ? 10 : 20) : 25;
     const verticalPadding = isMobile ? 
-      (isSmallMobile ? height * 0.05 : height * 0.08) : 
-      height * 0.1;
+      (isSmallMobile ? height * 0.03 : height * 0.05) : 
+      height * 0.06;
     
     // Высота карты для мобильных устройств
     const mapHeight = isMobile ? 
@@ -1203,7 +1203,8 @@ export const RussiaMap: React.FC = () => {
     const boundsHeight = bounds[1][1] - bounds[0][1];
 
     // Вычисляем оптимальный масштаб, чтобы карта помещалась в доступное пространство
-    const scale = 0.9 * Math.min(availableWidth / boundsWidth, availableHeight / boundsHeight) * 1000;
+    // Увеличиваем коэффициент для более крупной карты, но оставляем запас для стабильности
+    const scale = 0.98 * Math.min(availableWidth / boundsWidth, availableHeight / boundsHeight) * 1000;
 
     // Вычисляем центр карты в bounds
     const boundsCenter = [(bounds[0][0] + bounds[1][0]) / 2, (bounds[0][1] + bounds[1][1]) / 2];
@@ -1312,30 +1313,63 @@ export const RussiaMap: React.FC = () => {
         ? baseHeight + (totalRecipeLines * recipeLineHeight) + (recipes.slice(0, 3).length * recipeSpacing)
         : baseHeight;
       
-      const verticalOffset = 15;
-      
       // Получаем центроид региона с учетом трансформации
       const centroid = path.centroid(d);
       const transformedCentroid = [centroid[0] + centerTranslateRef.current.x, centroid[1] + centerTranslateRef.current.y];
+      
+      // Получаем границы региона для лучшего позиционирования
+      const regionBounds = path.bounds(d);
+      const regionTop = regionBounds[0][1] + centerTranslateRef.current.y;
+      const regionBottom = regionBounds[1][1] + centerTranslateRef.current.y;
+      const regionLeft = regionBounds[0][0] + centerTranslateRef.current.x;
+      const regionRight = regionBounds[1][0] + centerTranslateRef.current.x;
+      const regionHeight = regionBottom - regionTop;
       
       // Проверяем границы экрана
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       
-      // Корректируем позицию всплывающего окна
-      let adjustedX = transformedCentroid[0];
-      let adjustedY = transformedCentroid[1] - verticalOffset;
+      // Отступ от региона с учетом масштаба
+      const baseVerticalOffset = Math.round(30 * popupScale);
+      const minVerticalOffset = Math.round(20 * popupScale);
       
-      // Проверяем выход за границы по горизонтали
-      if (adjustedX - popupWidth/2 < 20) {
-        adjustedX = 20 + popupWidth/2;
-      } else if (adjustedX + popupWidth/2 > viewportWidth - 20) {
-        adjustedX = viewportWidth - 20 - popupWidth/2;
+      // Начальная позиция - над регионом
+      let adjustedX = transformedCentroid[0];
+      let adjustedY = regionTop - popupHeight/2 - baseVerticalOffset;
+      
+      // Определяем отступы с меньшими значениями для большей карты
+      const horizontalMargin = isMobile ? (isSmallMobile ? 10 : 15) : 15;
+      const verticalMargin = isMobile ? (isSmallMobile ? 10 : 15) : 15;
+      
+      // Проверяем выход за границы по вертикали (сверху) с меньшими отступами
+      if (adjustedY - popupHeight/2 < verticalMargin) {
+        // Если не помещается сверху, размещаем снизу
+        adjustedY = regionBottom + popupHeight/2 + baseVerticalOffset;
+        
+        // Если и снизу не помещается, размещаем сбоку
+        if (adjustedY + popupHeight/2 > viewportHeight - verticalMargin) {
+          adjustedY = transformedCentroid[1];
+          
+          // Пробуем справа
+          if (regionRight + popupWidth/2 + baseVerticalOffset < viewportWidth - horizontalMargin) {
+            adjustedX = regionRight + popupWidth/2 + baseVerticalOffset;
+          }
+          // Пробуем слева
+          else if (regionLeft - popupWidth/2 - baseVerticalOffset > horizontalMargin) {
+            adjustedX = regionLeft - popupWidth/2 - baseVerticalOffset;
+          }
+          // Если не помещается ни справа, ни слева, размещаем по центру с минимальным отступом
+          else {
+            adjustedY = Math.max(popupHeight/2 + verticalMargin, Math.min(regionTop - popupHeight/2 - minVerticalOffset, viewportHeight - popupHeight/2 - verticalMargin));
+          }
+        }
       }
       
-      // Проверяем выход за границы по вертикали
-      if (adjustedY - popupHeight/2 < 20) {
-        adjustedY = transformedCentroid[1] + verticalOffset + popupHeight/2 + 20;
+      // Проверяем выход за границы по горизонтали с меньшими отступами
+      if (adjustedX - popupWidth/2 < horizontalMargin) {
+        adjustedX = horizontalMargin + popupWidth/2;
+      } else if (adjustedX + popupWidth/2 > viewportWidth - horizontalMargin) {
+        adjustedX = viewportWidth - horizontalMargin - popupWidth/2;
       }
       
       const popup = popupGroup.append("g")
@@ -1356,11 +1390,41 @@ export const RussiaMap: React.FC = () => {
         .attr("stroke-width", 1)
         .style("pointer-events", "none");
 
-      // Стрелка внизу окна
+      // Определяем направление стрелки в зависимости от позиции окна относительно региона
       const baseArrowSize = 8;
       const arrowSize = Math.round(baseArrowSize * popupScale);
+      
+      let arrowPoints = "";
+      let arrowPosition = { x: 0, y: popupHeight/2 };
+      
+      // Если окно над регионом - стрелка вниз
+      if (adjustedY < regionTop) {
+        arrowPoints = `0,${popupHeight/2} ${-arrowSize},${popupHeight/2 - arrowSize} ${arrowSize},${popupHeight/2 - arrowSize}`;
+        arrowPosition = { x: 0, y: popupHeight/2 };
+      }
+      // Если окно под регионом - стрелка вверх
+      else if (adjustedY > regionBottom) {
+        arrowPoints = `0,${-popupHeight/2} ${-arrowSize},${-popupHeight/2 + arrowSize} ${arrowSize},${-popupHeight/2 + arrowSize}`;
+        arrowPosition = { x: 0, y: -popupHeight/2 };
+      }
+      // Если окно справа от региона - стрелка влево
+      else if (adjustedX > transformedCentroid[0]) {
+        arrowPoints = `${-popupWidth/2},0 ${-popupWidth/2 + arrowSize},${-arrowSize} ${-popupWidth/2 + arrowSize},${arrowSize}`;
+        arrowPosition = { x: -popupWidth/2, y: 0 };
+      }
+      // Если окно слева от региона - стрелка вправо
+      else if (adjustedX < transformedCentroid[0]) {
+        arrowPoints = `${popupWidth/2},0 ${popupWidth/2 - arrowSize},${-arrowSize} ${popupWidth/2 - arrowSize},${arrowSize}`;
+        arrowPosition = { x: popupWidth/2, y: 0 };
+      }
+      // По умолчанию стрелка вниз
+      else {
+        arrowPoints = `0,${popupHeight/2} ${-arrowSize},${popupHeight/2 - arrowSize} ${arrowSize},${popupHeight/2 - arrowSize}`;
+        arrowPosition = { x: 0, y: popupHeight/2 };
+      }
+      
       popup.append("polygon")
-        .attr("points", `0,${popupHeight/2} ${-arrowSize},${popupHeight/2 - arrowSize} ${arrowSize},${popupHeight/2 - arrowSize}`)
+        .attr("points", arrowPoints)
         .attr("fill", "white")
         .attr("stroke", "#e2e8f0")
         .attr("stroke-width", Math.max(1, Math.round(popupScale)))
@@ -1519,10 +1583,10 @@ export const RussiaMap: React.FC = () => {
       const isMobile = newWidth <= 768;
       const isSmallMobile = newWidth <= 480;
       
-      const newPadding = isMobile ? (isSmallMobile ? 20 : 30) : 40;
-      const newVerticalPadding = isMobile ? 
-        (isSmallMobile ? newHeight * 0.05 : newHeight * 0.08) : 
-        newHeight * 0.1;
+             const newPadding = isMobile ? (isSmallMobile ? 10 : 20) : 25;
+       const newVerticalPadding = isMobile ? 
+         (isSmallMobile ? newHeight * 0.03 : newHeight * 0.05) : 
+         newHeight * 0.06;
       
       const newMapHeight = isMobile ? 
         (isSmallMobile ? Math.min(400, newHeight * 0.5) : Math.min(500, newHeight * 0.6)) : 
@@ -1545,7 +1609,7 @@ export const RussiaMap: React.FC = () => {
       const tempBoundsWidth = tempBounds[1][0] - tempBounds[0][0];
       const tempBoundsHeight = tempBounds[1][1] - tempBounds[0][1];
 
-      const newScale = 0.9 * Math.min(newAvailableWidth / tempBoundsWidth, newAvailableHeight / tempBoundsHeight) * 1000;
+             const newScale = 0.98 * Math.min(newAvailableWidth / tempBoundsWidth, newAvailableHeight / tempBoundsHeight) * 1000;
 
       // Обновляем проекцию
       projection
