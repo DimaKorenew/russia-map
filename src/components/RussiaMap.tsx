@@ -1156,6 +1156,8 @@ export const RussiaMap: React.FC = () => {
           const { transform } = event;
           setZoomLevel(transform.k);
           g.attr("transform", `${transform} translate(${centerTranslateRef.current.x}, ${centerTranslateRef.current.y})`);
+          // Обновляем всплывающие окна при зуме (закрываем их)
+          popupGroup.selectAll("*").remove();
         });
 
       svg.call(zoom);
@@ -1240,7 +1242,7 @@ export const RussiaMap: React.FC = () => {
       .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
       .style("-webkit-touch-callout", "none");
 
-    const updatePopup = (d: any) => {
+    const updatePopup = (d: any, currentScale: number = 1) => {
       popupGroup.selectAll("*").remove();
 
       if (!d) return;
@@ -1253,18 +1255,34 @@ export const RussiaMap: React.FC = () => {
       const isMobile = window.innerWidth <= 768;
       const isSmallMobile = window.innerWidth <= 480;
       
+      // Вычисляем масштабный коэффициент для всплывающих окон
+      // Чем больше карта, тем больше всплывающие окна
+      const mapScale = Math.max(0.6, Math.min(1.4, currentScale));
+      const popupScale = isMobile ? Math.max(0.7, mapScale * 0.8) : mapScale;
+      
+      // Размеры с учетом масштаба карты
+      const baseFontSize = isMobile ? (isSmallMobile ? 18 : 20) : 22;
+      const titleFontSize = Math.round(baseFontSize * popupScale);
+      
       // Создаем временный элемент для измерения ширины текста
       const tempText = svg.append("text")
-        .attr("font-size", isMobile ? (isSmallMobile ? "18px" : "20px") : "22px")
+        .attr("font-size", `${titleFontSize}px`)
         .attr("font-weight", "700")
         .text(name);
       const textWidth = tempText.node()?.getBBox().width || 0;
       tempText.remove();
 
-      const padding = isMobile ? (isSmallMobile ? 16 : 20) : 24;
-      const maxWidth = isMobile ? (isSmallMobile ? 250 : 300) : 320;
+      const basePadding = isMobile ? (isSmallMobile ? 16 : 20) : 24;
+      const padding = Math.round(basePadding * popupScale);
+      
+      const baseMaxWidth = isMobile ? (isSmallMobile ? 250 : 300) : 320;
+      const maxWidth = Math.round(baseMaxWidth * popupScale);
+      
+      const baseMinWidth = isMobile ? (isSmallMobile ? 200 : 240) : 280;
+      const minWidth = Math.round(baseMinWidth * popupScale);
+      
       const popupWidth = Math.max(
-        isMobile ? (isSmallMobile ? 200 : 240) : 280, 
+        minWidth, 
         Math.min(maxWidth, textWidth + (padding * 2))
       );
       
@@ -1272,7 +1290,8 @@ export const RussiaMap: React.FC = () => {
       let totalRecipeLines = 0;
       const recipeLines: string[][] = [];
       
-      const recipeFontSize = isMobile ? (isSmallMobile ? 14 : 15) : 16;
+      const baseRecipeFontSize = isMobile ? (isSmallMobile ? 14 : 15) : 16;
+      const recipeFontSize = Math.round(baseRecipeFontSize * popupScale);
       
       recipes.slice(0, 3).forEach(recipe => {
         const lines = wrapText(recipe.name, popupWidth - (padding * 2), recipeFontSize);
@@ -1280,9 +1299,15 @@ export const RussiaMap: React.FC = () => {
         totalRecipeLines += lines.length;
       });
       
-      const baseHeight = isMobile ? (isSmallMobile ? 60 : 70) : 80;
-      const recipeLineHeight = isMobile ? (isSmallMobile ? 16 : 18) : 20;
-      const recipeSpacing = isMobile ? 6 : 8;
+      const baseBaseHeight = isMobile ? (isSmallMobile ? 60 : 70) : 80;
+      const baseHeight = Math.round(baseBaseHeight * popupScale);
+      
+      const baseRecipeLineHeight = isMobile ? (isSmallMobile ? 16 : 18) : 20;
+      const recipeLineHeight = Math.round(baseRecipeLineHeight * popupScale);
+      
+      const baseRecipeSpacing = isMobile ? 6 : 8;
+      const recipeSpacing = Math.round(baseRecipeSpacing * popupScale);
+      
       const popupHeight = recipes.length > 0 
         ? baseHeight + (totalRecipeLines * recipeLineHeight) + (recipes.slice(0, 3).length * recipeSpacing)
         : baseHeight;
@@ -1332,29 +1357,34 @@ export const RussiaMap: React.FC = () => {
         .style("pointer-events", "none");
 
       // Стрелка внизу окна
-      const arrowSize = 8;
+      const baseArrowSize = 8;
+      const arrowSize = Math.round(baseArrowSize * popupScale);
       popup.append("polygon")
         .attr("points", `0,${popupHeight/2} ${-arrowSize},${popupHeight/2 - arrowSize} ${arrowSize},${popupHeight/2 - arrowSize}`)
         .attr("fill", "white")
         .attr("stroke", "#e2e8f0")
-        .attr("stroke-width", 1)
+        .attr("stroke-width", Math.max(1, Math.round(popupScale)))
         .style("pointer-events", "none");
 
       // Название региона (крупный черный текст)
+      const baseTitleOffset = isMobile ? (isSmallMobile ? 28 : 32) : 35;
+      const titleOffset = Math.round(baseTitleOffset * popupScale);
+      
       popup.append("text")
         .attr("x", 0)
-        .attr("y", -popupHeight / 2 + (isMobile ? (isSmallMobile ? 28 : 32) : 35))
+        .attr("y", -popupHeight / 2 + titleOffset)
         .attr("text-anchor", "middle")
         .attr("fill", "#1a1a1a")
         .attr("font-weight", "700")
-        .attr("font-size", isMobile ? (isSmallMobile ? "18px" : "20px") : "22px")
+        .attr("font-size", `${titleFontSize}px`)
         .attr("font-family", "system-ui, -apple-system, sans-serif")
         .style("pointer-events", "none")
         .text(name);
 
       // Рецепты как синие ссылки с переносом текста
       if (recipes.length > 0) {
-        let currentY = isMobile ? (isSmallMobile ? 50 : 58) : 65;
+        const baseCurrentY = isMobile ? (isSmallMobile ? 50 : 58) : 65;
+        let currentY = Math.round(baseCurrentY * popupScale);
         
         recipes.slice(0, 3).forEach((recipe, i) => {
           const lines = recipeLines[i];
@@ -1413,12 +1443,18 @@ export const RussiaMap: React.FC = () => {
         });
       } else {
         // Показываем сообщение если нет рецептов
+        const baseNoDataOffset = isMobile ? (isSmallMobile ? 50 : 58) : 65;
+        const noDataOffset = Math.round(baseNoDataOffset * popupScale);
+        
+        const baseNoDataFontSize = isMobile ? (isSmallMobile ? 12 : 13) : 14;
+        const noDataFontSize = Math.round(baseNoDataFontSize * popupScale);
+        
         popup.append("text")
           .attr("x", 0)
-          .attr("y", -popupHeight / 2 + (isMobile ? (isSmallMobile ? 50 : 58) : 65))
+          .attr("y", -popupHeight / 2 + noDataOffset)
           .attr("text-anchor", "middle")
           .attr("fill", "#64748b")
-          .attr("font-size", isMobile ? (isSmallMobile ? "12px" : "13px") : "14px")
+          .attr("font-size", `${noDataFontSize}px`)
           .attr("font-style", "italic")
           .style("pointer-events", "none")
           .text("нет данных");
@@ -1463,14 +1499,14 @@ export const RussiaMap: React.FC = () => {
             .attr("fill", "#e2e8f0");
         }
         
-        updatePopup(d);
+        updatePopup(d, projection.scale() / 1000);
       });
 
     // Отключаем клик по SVG на мобильных устройствах для корректной работы зума
     if (!isMobile) {
       svg.on("click", function(event) {
         if (event.target.tagName === 'svg') {
-          updatePopup(null);
+          updatePopup(null, 1);
         }
       });
     }
@@ -1542,6 +1578,8 @@ export const RussiaMap: React.FC = () => {
              const { transform } = event;
              setZoomLevel(transform.k);
              g.attr("transform", `${transform} translate(${centerTranslateRef.current.x}, ${centerTranslateRef.current.y})`);
+             // Обновляем всплывающие окна при зуме (закрываем их)
+             popupGroup.selectAll("*").remove();
            });
 
         svg.call(zoom);
